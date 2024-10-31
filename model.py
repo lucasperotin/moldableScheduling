@@ -1,7 +1,9 @@
+
+#I put this bit of code here to avoid circular imports
 class Model:
     name: str
 
-    def __init(self):
+    def __init__(self):
         pass
 
     def get_alpha(self) -> float:
@@ -15,4 +17,3 @@ class Model:
 
     def p_max(self, task, p: int) -> int:
         raise NotImplementedError
-

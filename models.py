@@ -30,10 +30,10 @@ class CommunicationModel(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c * (nb_proc - 1)
+        return w *(1/ nb_proc + c * (nb_proc - 1))
 
     def p_max(self, task: Task, p: int) -> int:
-        s = sqrt(task.get_w() / task.get_c())
+        s = sqrt(1/ task.get_c())
         if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
             p_tild = floor(s)
         else:
@@ -53,15 +53,15 @@ class GeneralModel(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, d, p, c = task.get_w(), task.get_d(), task.get_p(), task.get_c()
-        return w * ((1 - d) / min(nb_proc, p) + d) + c * (nb_proc - 1)
+        return w * ((1 - d) / min(nb_proc, p) + d + c * (nb_proc - 1))
 
     def p_max(self, task: Task, p: int) -> int:
-        s = sqrt(task.get_w() / task.get_c())
+        w, d, c = task.get_w(), task.get_d(), task.get_c()
+        s = sqrt((1-d) / c)
         if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
             p_tild = floor(s)
         else:
             p_tild = ceil(s)
-
         return round(min(p, task.get_p(), p_tild))
 
 
@@ -82,21 +82,21 @@ class RooflineModel(Model):
         return min(ceil(task.get_p()), p)
 
 
-class Power0Model(Model):
-    name = "Power0"
+# class Power0Model:
+#     name = "Power0"
 
-    def get_alpha(self) -> float:
-        return 1.88  # TODO: get exact values
+#     def get_alpha(self) -> float:
+#         return 1.88  # TODO: get exact values
 
-    def get_mu(self) -> float:
-        return 1/4.54
+#     def get_mu(self) -> float:
+#         return 1/4.54
 
-    def time(self, task: Task, nb_proc: int) -> float:
-        w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c
+#     def time(self, task: Task, nb_proc: int) -> float:
+#         w, c = task.get_w(), task.get_c()
+#         return w *(1/ nb_proc + c)
     
-    def p_max(self, task: Task, p: int) -> int:
-        return p
+#     def p_max(self, task: Task, p: int) -> int:
+#         return p
 
 
 class Power25Model(Model):
@@ -110,11 +110,11 @@ class Power25Model(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c * nb_proc**(0.25)
+        return w *(1/ nb_proc + c * (nb_proc)**(0.25))
 
     def p_max(self, task: Task, p: int) -> int:  # TODO
         w, c = task.get_w(),task.get_c()
-        s = (w*4/c)**(1/1.25)
+        s = (4/c)**(1/1.25)
         if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
             p_tild = floor(s)
         else:
@@ -134,11 +134,11 @@ class Power50Model(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c * nb_proc**(0.5)
+        return w / nb_proc + c * (nb_proc)**(0.5)
 
     def p_max(self, task: Task, p: int) -> int:  # TODO
         w, c = task.get_w(),task.get_c()
-        s = (w *2/c)**(1/1.5)
+        s = (2/c)**(1/1.5)
         if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
             p_tild = floor(s)
         else:
@@ -158,11 +158,11 @@ class Power75Model(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c * nb_proc**(0.75)
+        return w / nb_proc + c * (nb_proc)**(0.75)
 
     def p_max(self, task: Task, p: int) -> int:  # TODO
         w, c = task.get_w(),task.get_c()
-        s = (w /0.75/c)**(1/1.75)
+        s = (1/0.75/c)**(1/1.75)
         if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
             p_tild = floor(s)
         else:
@@ -171,25 +171,25 @@ class Power75Model(Model):
         return round(min(p, p_tild))
 
 
-# class Power1Model(Model):
-#     name = "Power1"
+class Power100Model(Model):
+    name = "Power100"
 
-#     def get_alpha(self) -> float:
-#         return 1.45  # TODO: get exact values
+    def get_alpha(self) -> float:
+        return 1.45  # TODO: get exact values
 
-#     def get_mu(self) -> float:
-#         return 1/3.44
+    def get_mu(self) -> float:
+        return 1/3.44
 
-#     def time(self, task: Task, nb_proc: int) -> float:
-#         w, c = task.get_w(), task.get_c()
-#         return w / nb_proc + c * nb_proc
+    def time(self, task: Task, nb_proc: int) -> float:
+        w, c = task.get_w(), task.get_c()
+        return w *(1/ nb_proc + c * nb_proc)
 
-#     def p_max(self, task: Task, p: int) -> int:
-#         w, alpha = task.get_w(), self.get_alpha()
-#         s = sqrt(w * (alpha - 1) + alpha)
-#         if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
-#             p_tild = floor(s)
-#         else:
-#             p_tild = ceil(s)
+    def p_max(self, task: Task, p: int) -> int:
+        w, c = task.get_w(), task.get_c()
+        s = sqrt(1/c)
+        if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
+            p_tild = floor(s)
+        else:
+            p_tild = ceil(s)
 
-#         return round(min(p, task.get_p(), p_tild))
+        return round(min(p, task.get_p(), p_tild))

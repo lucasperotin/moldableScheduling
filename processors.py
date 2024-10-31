@@ -6,7 +6,7 @@
 
 # This class implement our set of processors
 
-from numerics import *
+from parameters import *
 from graph import *
 from task import Status
 import csv
@@ -16,6 +16,7 @@ from models import *
 from sortedcontainers import SortedList
 import logging
 
+import os
 
 class Processors:
 
@@ -48,8 +49,8 @@ class Processors:
     # Methods
     ############################################################
 
-    def online_scheduling_algorithm(self, task_graph, allocation_function, alpha, save_in_logs=False, adjacency=[],
-                                    P_tild=P, mu_tild=mu, speedup_model: Model = GeneralModel(), version=0):
+    def online_scheduling_algorithm(self, task_graph, allocation_function, alpha, adjacency,
+                                    P_tild, mu_tild, speedup_model: Model = GeneralModel(), version=0,save_in_logs=False):
         """"
         Given a task graph, this function calculate the time needed to complete every task of the task graph.
         It's the implementation of the algorithm 1 from the paper. Concerning the allocation_function :
@@ -57,7 +58,6 @@ class Processors:
         2 : allocate_processor_Min_time
         3 : allocate_processor_Min_area
         """
-
         logging.debug("  ---- Starting ----")
         logging.debug("Number of processors :", self.get_nb_processors())
         if allocation_function == 1:
@@ -82,16 +82,26 @@ class Processors:
                 if allocation_function == 1:
                     task.allocate_processor_algo(P_tild, mu_tild, alpha, speedup_model, version)
                 elif allocation_function == 2:
-                    task.allocate_processor_Min_time(P_tild, mu_tild, speedup_model)
+                    task.allocate_processor_Min_time(P_tild, speedup_model)
                 elif allocation_function == 3:
-                    task.allocate_processor_Min_area(P_tild, mu_tild, speedup_model)
+                    task.allocate_processor_Min_area(P_tild, speedup_model)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
                 waiting_queue.add(task)
                 task.set_status(Status.PROCESSING)
-
+        looptest=-1
         while waiting_queue or process_list:
             # Cleaning of the processors
-
+            if (self.get_time()==looptest):
+                #print(self.get_time())
+                #print(process_list)
+                #print(available_tasks)
+                #print(self.get_available_processors())
+                #for task in waiting_queue:
+                 #   print(task.get_allocation())
+                print("Error : infinite loop detected")
+                os._exit()
+            else:
+                looptest=self.get_time()
             available_tasks = set()
             if process_list:
                 task = min(process_list)
@@ -112,13 +122,14 @@ class Processors:
                             available_tasks.add(nodes[child])
 
             # Processor allocation
+            
             for task in available_tasks:
                 if allocation_function == 1:
                     task.allocate_processor_algo(P_tild, mu_tild, alpha, speedup_model, version)
                 elif allocation_function == 2:
-                    task.allocate_processor_Min_time(P_tild, mu_tild, speedup_model)
+                    task.allocate_processor_Min_time(P_tild, speedup_model)
                 elif allocation_function == 3:
-                    task.allocate_processor_Min_area(P_tild, mu_tild, speedup_model)
+                    task.allocate_processor_Min_area(P_tild, speedup_model)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
                 waiting_queue.add(task)
                 task.set_status(Status.PROCESSING)
@@ -149,7 +160,6 @@ class Processors:
             if process_list:
                 next_task = min(process_list)
                 self.time = next_task.get_needed_time() + next_task.get_starting_time()
-
         # if save_in_logs:
         #     log.close()
 

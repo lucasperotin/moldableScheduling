@@ -12,7 +12,20 @@ import numpy as np
 import logging
 from task import Status
 
+def format_scientific(number):
+    # Format to scientific notation with 3 significant figures
+    formatted = f"{number:.2e}"
+    
+    # Split into coefficient and exponent
+    coeff, exp = formatted.split('e')
+    
+    # Remove leading '+' from exponent if present
+    exp = exp.lstrip('+')
+    
+    # Format as x.yy*10^k
+    return f"{coeff}*10^{exp}"
 
+# In your print statement
 class Graph:
 
     def __init__(self, nodes=None, edges=None):
@@ -91,6 +104,11 @@ class Graph:
         for task in self.get_nodes():
             A_min += task.get_minimum_area(P, speedup_model)[0]
         return A_min
+    def get_A_max(self,P,speedup_model):
+        A_max=0
+        for task in self.get_nodes():
+            A_max += task.get_minimum_execution_time(P, speedup_model)[0]*task.get_minimum_execution_time(P, speedup_model)[1]
+        return A_max
 
     def get_C_min(self, P, adjacency, speedup_model):
         """C_min is the minimal execution time for the graph"""
@@ -131,7 +149,11 @@ class Graph:
 
     def get_T_opt(self, P, adjacency, speedup_model):
         """Return the inferior bound for T optimal for a given graph"""
-        print(self.get_A_min(P, speedup_model) / P, self.get_C_min(P, adjacency, speedup_model))
+        print(
+            format_scientific(self.get_A_min(P, speedup_model) / P),
+            format_scientific(self.get_A_max(P, speedup_model) / P),
+            format_scientific(self.get_C_min(P, adjacency, speedup_model))
+        )
         output = max(self.get_A_min(P, speedup_model) / P, self.get_C_min(P, adjacency, speedup_model))
         logging.debug("Optimal execution time :", output)
         return output
