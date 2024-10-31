@@ -132,7 +132,7 @@ class Task:
         """"Allocating more than p_max processors to the task will no longer decrease its execution time"""
         return speedup_model.p_max(self, P)
 
-    def allocate_processor_algo(self, P, mu, alpha, speedup_model: Model, version):
+    def allocate_processor_algo(self, P, mu_tild, alpha, speedup_model: Model, version):
         """
         Return the number of processors needed to compute a given task. It's the implementation of the algorithm 2
         from the paper.
@@ -162,7 +162,7 @@ class Task:
                 Beta = self.get_execution_time(i, speedup_model) / t_min
 
                 if Beta < (1 - 2 * mu_tild) / (mu_tild * (1 - mu_tild)):
-                    if Alpha < Alpha_min:
+                    if Alphatemp < Alpha_min:
                         Alpha_min = Alphatemp
                         final_nb_processors = i
 
@@ -181,8 +181,8 @@ class Task:
 
 
         # Step 2 : Allocation Adjustment
-        if final_nb_processors > ceil(mu * P):
-            self.set_allocation(ceil(mu * P))
+        if final_nb_processors > ceil(mu_tild * P):
+            self.set_allocation(ceil(mu_tild * P))
         else:
             self.set_allocation(final_nb_processors)
 
