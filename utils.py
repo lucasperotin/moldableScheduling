@@ -257,12 +257,10 @@ def compute_and_save(variation_parameter, result_directory):
         for i in range(nb_iterations):
             for k in range(nbpar):
                 pc = num / (nb_iterations * nbpar * len(MODEL_LIST))
-                eta = ((time.process_time_ns() - start_time) / 1e9) * ((1 - pc) / pc)
                 print(f"[{pc * 100:.2f} %]"
                       f" {model.name} model ({idx + 1}/{len(MODEL_LIST)}),"
                       f" instance {(i+1):2d}/{nb_iterations},"
                       f" parameter {k + 1:2d}/{nbpar},"
-                      f" ETA: {int(eta)}s,"
                       f" variation : {variation_parameter}")
                 num += 1
                 
@@ -319,9 +317,8 @@ def compute_and_save(variation_parameter, result_directory):
                 #print(format_scientific(amin / P_tild))
                 cpmin=task_graph.get_C_min(P_tild,speedup_model)
                 #print(format_scientific(cpmin))
-                time_opt = max(amin,cpmin)
+                time_opt = max(amin/P_tild,cpmin)
                 
-                priority=priorityMain
                 
                 for heu in Heuristics:
                     if (heu=="ICPP22"):
@@ -392,8 +389,8 @@ def display_results(variation_parameter, result_directory,boxplot):
                         index=k
                 for k in range(nbheur):
                     HeurResults[k][index]+=[float(row[k+1]) / float(row[nbheur+1])]
-                BoundResults[0][index]+=float(row[nbheur+2])
-                BoundResults[1][index]+=float(row[nbheur+3])
+                BoundResults[0][index]+=[float(row[nbheur+2])]
+                BoundResults[1][index]+=[float(row[nbheur+3])]
         f.close()
         if boxplot:
             # Add reversed figure for "Priority" variation parameter
@@ -524,6 +521,6 @@ def display_results(variation_parameter, result_directory,boxplot):
             plt.gca().xaxis.set_tick_params(which='minor', width=0)
     
     
-            plt.savefig(result_directory + variation_parameter + "_" + model.name+ "bounds")
+            plt.savefig(result_directory + variation_parameter + "_" + model.name+ "_bounds")
             plt.close()
 

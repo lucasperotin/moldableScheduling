@@ -5,13 +5,12 @@ from math import *
 from models import *
 
 #MODEL_LIST=[GeneralModel(),AmdahlModel(),CommunicationModel(),RooflineModel(),Power25Model(),Power50Model(),Power75Model(),Power100Model()]
-MODEL_LIST = [CommunicationModel()]#,AmdahlModel(),CommunicationModel(),RooflineModel(),Power50Model(),Power100Model()] #See in models.py for more details
-#MODEL_LIST=[AmdahlModel(),CommunicationModel(),Power50Model()]
-#parameters=["Regular","Density","Fat","n","P", "Priority","Jump"]
-parameters=["Regular"]
+MODEL_LIST=[GeneralModel(),AmdahlModel(),CommunicationModel(),RooflineModel(),Power25Model(),Power50Model(),Power75Model(),Power100Model()]
+parameters=["Regular","Density","Fat","n","P", "Priority","Jump"]
+#parameters=["Regular"]
 Heuristics=["ICPP22", "TOPC24", "minTime"]#, "Amin", "ATmin","CP"]
 #Heuristics=["Amin", "CP"]
-nb_iterations =11
+nb_iterations =1
 alpha=0
 mu=0
 

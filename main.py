@@ -1,6 +1,8 @@
-# main
 import time
+from multiprocessing import Pool
+import os
 
+from generate_latex import *
 from processors import *
 from utils import *
 from statistics import *
@@ -8,32 +10,24 @@ import matplotlib.pyplot as plt
 import logging
 from parameters import *
 
+def compute_and_save_wrapper(par):
+    compute_and_save(par, f'Results/{par}/')
 
-def compute_and_save_all():
-    for par in parameters:
-        compute_and_save(par,'Results/'+par+"/")
+def display_wrapper(par):
+    display_results(par, f'Results/{par}/', False)
 
+def display_boxplot_wrapper(par):
+    display_results(par, f'Results/{par}/', True)
 
-def display_all():
-    for par in parameters:
-        display_results(par,'Results/'+par+"/",False)
-        
+def run_in_parallel(func, iterable):
+    num_cores = min(os.cpu_count(), len(iterable))  # Use the minimum of available cores and number of parameters
+    with Pool(num_cores) as p:
+        p.map(func, iterable)
 
-def display_all_boxplot():
-    for par in parameters:
-        display_results(par,'Results/'+par+"/",True)
-
-
-start_time = time.process_time_ns()
-
-#generate_daggen()
-#genTaskFiles()
-compute_and_save_all()
-display_all()
-display_all_boxplot()
-
-
-end_time = time.process_time_ns()
-
-print(f"Finished computing in {(end_time-start_time)/(10**9):.3f}s")
-
+if __name__ == '__main__':
+    generate_daggen()
+    genTaskFiles()
+    run_in_parallel(compute_and_save_wrapper, parameters)
+    run_in_parallel(display_wrapper, parameters)
+    run_in_parallel(display_boxplot_wrapper, parameters)
+    generate_latex_report(parameters, MODEL_LIST)
