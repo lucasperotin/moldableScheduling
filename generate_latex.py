@@ -16,7 +16,7 @@ def generate_latex_report(parameters, model_list):
     ]
 
     sections = ["Lines Figures", "Boxplot Figures", "Bounds Figures"]
-    figure_types = ["", "_boxplot", "bounds"]
+    figure_types = ["", "_boxplot", "_bounds"]
 
     for section, figure_type in zip(sections, figure_types):
         latex_content.extend([

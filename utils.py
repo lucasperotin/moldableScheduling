@@ -331,6 +331,11 @@ def compute_and_save(variation_parameter, result_directory):
                                                                               mu_tild=mu_tild
                                                                              , priority= priority, speedup_model=speedup_model, P_tild=P_tild
                                                                              , version=1))]
+                    elif (heu=="Fair"):
+                        row+=[str(processors.online_scheduling_algorithm(task_graph, 1, alpha=alpha_tild,
+                                                                              mu_tild=mu_tild
+                                                                             , priority= priority, speedup_model=speedup_model, P_tild=P_tild
+                                                                             , version=2))]
                         
                     elif(heu=="minTime"):
                         row+=[str(processors.online_scheduling_algorithm(task_graph, 2, alpha=alpha_tild,

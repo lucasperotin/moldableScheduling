@@ -25,9 +25,9 @@ def run_in_parallel(func, iterable):
         p.map(func, iterable)
 
 if __name__ == '__main__':
-    generate_daggen()
-    genTaskFiles()
-    run_in_parallel(compute_and_save_wrapper, parameters)
-    run_in_parallel(display_wrapper, parameters)
-    run_in_parallel(display_boxplot_wrapper, parameters)
+    #generate_daggen()
+    #genTaskFiles()
+    #run_in_parallel(compute_and_save_wrapper, parameters)
+    #run_in_parallel(display_wrapper, parameters)
+    #run_in_parallel(display_boxplot_wrapper, parameters)
     generate_latex_report(parameters, MODEL_LIST)

@@ -187,8 +187,20 @@ class Task:
                     if Beta < Beta_min:
                         Beta_min = Beta
                         final_nb_processors = i
-
-
+        elif version == 2:
+            max_alpha_beta_min = float('inf')
+            final_nb_processors = -1
+            for i in range(1, p_max + 1):
+                Alphatemp = self.get_area(i, speedup_model) / a_min
+                Beta = self.get_execution_time(i, speedup_model) / t_min
+                max_alpha_beta = max(Alphatemp, Beta)
+                if max_alpha_beta < max_alpha_beta_min:
+                    max_alpha_beta_min = max_alpha_beta
+                    final_nb_processors = i
+        
+            
+        if version==2:
+            mu_tild=(3-sqrt(5))/2
         # Step 2 : Allocation Adjustment
         if final_nb_processors > ceil(mu_tild * P):
             self.set_allocation(ceil(mu_tild * P))

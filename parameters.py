@@ -5,10 +5,10 @@ from math import *
 from models import *
 
 #MODEL_LIST=[GeneralModel(),AmdahlModel(),CommunicationModel(),RooflineModel(),Power25Model(),Power50Model(),Power75Model(),Power100Model()]
-MODEL_LIST=[GeneralModel(),AmdahlModel(),CommunicationModel(),RooflineModel(),Power25Model(),Power50Model(),Power75Model(),Power100Model()]
+MODEL_LIST=[GeneralModel()]
 parameters=["Regular","Density","Fat","n","P", "Priority","Jump"]
 #parameters=["Regular"]
-Heuristics=["ICPP22", "TOPC24", "minTime"]#, "Amin", "ATmin","CP"]
+Heuristics=["ICPP22", "TOPC24", "minTime","Fair"]#, "Amin", "ATmin","CP"]
 #Heuristics=["Amin", "CP"]
 nb_iterations =1
 alpha=0
@@ -30,7 +30,7 @@ PMain= 640
 logP=False
 n_list = [1000, 2000, 3000, 4000, 5000] 
 nMain=3000
-jump_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]  
+jump_list = [ 2, 3, 4, 5, 6, 7, 8]  
 jumpMain=5
 fat_list = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 fatMain=0.7
