@@ -15,9 +15,23 @@ from datetime import datetime
 from models import *
 from sortedcontainers import SortedList
 import logging
+from random import *
 
 import os
 
+def get_priority_key(task, priority, speedup_model=None):
+    if priority == "length":
+        return (-task.get_needed_time(), task.get_name())
+    elif priority == "FIFO":
+        return (task.get_discovery_time(), task.get_name())
+    elif priority == "proc":
+        return (-task.get_allocation(), task.get_name())
+    elif priority == "area":
+        return (-task.get_area(task.get_allocation(), speedup_model), task.get_name())
+    else:
+        return (0, task.get_name())  # Default case, sort by name only
+    
+    
 class Processors:
 
     def __init__(self, nb_processors):
@@ -49,8 +63,8 @@ class Processors:
     # Methods
     ############################################################
 
-    def online_scheduling_algorithm(self, task_graph, allocation_function, alpha, adjacency,
-                                    P_tild, mu_tild, speedup_model: Model = GeneralModel(), version=0,save_in_logs=False):
+    def online_scheduling_algorithm(self, task_graph, allocation_function, alpha,
+                                    P_tild, mu_tild, priority = "FIFO", speedup_model: Model = GeneralModel(), version=0,save_in_logs=False):
         """"
         Given a task graph, this function calculate the time needed to complete every task of the task graph.
         It's the implementation of the algorithm 1 from the paper. Concerning the allocation_function :
@@ -78,7 +92,7 @@ class Processors:
         #     writer.writerow(['Time', 'Waiting Queue', 'Processors Queue', 'Number of available processors'])
 
         for task in nodes:  # Insert all tasks without parents in the waiting queue
-            if not task_graph.get_parents(nodes.index(task), adjacency):
+            if not task_graph.get_parents(nodes.index(task)):
                 if allocation_function == 1:
                     task.allocate_processor_algo(P_tild, mu_tild, alpha, speedup_model, version)
                 elif allocation_function == 2:
@@ -86,22 +100,26 @@ class Processors:
                 elif allocation_function == 3:
                     task.allocate_processor_Min_area(P_tild, speedup_model)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
+                task.set_discovery_time(self.get_time())
                 waiting_queue.add(task)
                 task.set_status(Status.PROCESSING)
+                
+        nbloo=0
         looptest=-1
+        infloo=0
         while waiting_queue or process_list:
+            #print(nbloo)
+            #print("1")
+            nbloo+=1
             # Cleaning of the processors
             if (self.get_time()==looptest):
-                #print(self.get_time())
-                #print(process_list)
-                #print(available_tasks)
-                #print(self.get_available_processors())
-                #for task in waiting_queue:
-                 #   print(task.get_allocation())
-                print("Error : infinite loop detected")
-                os._exit()
+                infloo+=1
+                if (infloo>=100):
+                    print("Error : infinite loop detected")
+                    os._exit()
             else:
                 looptest=self.get_time()
+                infloo=0
             available_tasks = set()
             if process_list:
                 task = min(process_list)
@@ -109,9 +127,9 @@ class Processors:
                 task.set_status(Status.PROCESSED)
                 #print("Task "+(str) (task.get_name()) +" is completed "+(str) (self.get_time()))
                 self.available_processors += task.get_allocation()
-                for child in task_graph.get_children(nodes.index(task), adjacency):
+                for child in task_graph.get_children(nodes.index(task)):
                     if nodes[child].get_status() == Status.BLOCKED:
-                        parents = task_graph.get_parents(child, adjacency)
+                        parents = task_graph.get_parents(child)
                         available = True
                         for parent in parents:
                             if nodes[parent].get_status() != Status.PROCESSED:
@@ -119,10 +137,11 @@ class Processors:
                                 break
                         if available:
                             nodes[child].set_status(Status.AVAILABLE)
+                            nodes[child].set_discovery_time(self.get_time())
                             available_tasks.add(nodes[child])
 
             # Processor allocation
-            
+            #print("2")
             for task in available_tasks:
                 if allocation_function == 1:
                     task.allocate_processor_algo(P_tild, mu_tild, alpha, speedup_model, version)
@@ -143,9 +162,11 @@ class Processors:
 
             # List Scheduling
             to_remove = set()
-            
-            for task in waiting_queue:
-               # print((str) (task.get_name())+" "+(str) (self.get_available_processors())+" "+(str) (task.get_allocation()))
+            #print("3")
+            sorted_queue = sorted(waiting_queue, key=lambda task: get_priority_key(task, priority, speedup_model))
+            #print(len(sorted_queue))
+            for task in sorted_queue:                
+                 # print((str) (task.get_name())+" "+(str) (self.get_available_processors())+" "+(str) (task.get_allocation()))
                 if self.get_available_processors() >= task.get_allocation():
                     process_list.append(task)
                     to_remove.add(task)

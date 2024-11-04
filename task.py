@@ -20,9 +20,9 @@ class Status(Enum):
     PROCESSED = 3
 
 
-class Task:
 
-    def __init__(self, w, p, d, c, status: Status = Status.BLOCKED, allocation=None, needed_time=None, starting_time=None ):
+class Task:
+    def __init__(self, name, w, p, d, c, status: Status = Status.BLOCKED, allocation=None, needed_time=None, starting_time=None, discovery_time=None,nbpar=0 ):
         """
         :param w: The total parallelizable work of the task
         :param p: The maximum degree of parallelism of the task
@@ -35,7 +35,7 @@ class Task:
         :param needed_time: The time needed by the task to be processed ( it depends on the allocation)
         :param starting_time: The time when the task start being processed.
         """
-        #self._name=name
+        self._name=name
         self._w = w
         self._p = p
         self._d = d
@@ -44,12 +44,14 @@ class Task:
         self._allocation = allocation
         self._needed_time = needed_time
         self._starting_time = starting_time
+        self._discovery_time = discovery_time
+        self._nbpar=nbpar
 
     ## Getters and Setters
     ############################################################
 
-    #def get_name(self):
-     #   return self._name
+    def get_name(self):
+        return self._name
         
     def get_w(self):
         return self._w
@@ -62,6 +64,9 @@ class Task:
 
     def get_c(self):
         return self._c
+    
+    def get_nb_par_left(self):
+        return self._nbpar
 
     def get_status(self) -> Status:
         return self._status
@@ -74,6 +79,9 @@ class Task:
 
     def get_starting_time(self):
         return self._starting_time
+    
+    def get_discovery_time(self):
+        return self._discovery_time 
 
     def set_w(self, value):
         self._w = value
@@ -89,6 +97,9 @@ class Task:
     def set_c(self, value):
         self._c = value
 
+    def set_nb_par_left(self,value):
+        self._nbpar=value
+    
     def set_status(self, value: Status):
         self._status = value
 
@@ -102,6 +113,9 @@ class Task:
 
     def set_starting_time(self, value):
         self._starting_time = value
+        
+    def set_discovery_time(self, value):
+        self._discovery_time  = value
 
     ## Methods
     ############################################################
@@ -121,7 +135,6 @@ class Task:
             raise ValueError("p must be different from 0")
         if nb_processors < 1:
             raise ValueError("The number of processors must be superior to 1")
-
         return speedup_model.time(self, nb_processors)
 
     def get_area(self, number_of_processors, speedup_model: Model):
@@ -144,10 +157,6 @@ class Task:
         """
 
         # Step 1 : Initial Allocation
-        w = self.get_w()
-        p = self.get_p()
-        d = self.get_d()
-        c = self.get_c()
         p_max = self.get_p_max(P, speedup_model)
         t_min = self.get_execution_time(p_max, speedup_model)
         a_min = self.get_execution_time(1, speedup_model)

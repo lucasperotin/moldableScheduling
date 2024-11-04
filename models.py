@@ -19,29 +19,6 @@ class AmdahlModel(Model):
         return p
 
 
-class CommunicationModel(Model):
-    name = "Communication"
-
-    def get_alpha(self) -> float:
-        return 4 / 3
-
-    def get_mu(self) -> float:
-        return (23 - sqrt(313)) / 18
-
-    def time(self, task: Task, nb_proc: int) -> float:
-        w, c = task.get_w(), task.get_c()
-        return w *(1/ nb_proc + c * (nb_proc - 1))
-
-    def p_max(self, task: Task, p: int) -> int:
-        s = sqrt(1/ task.get_c())
-        if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
-            p_tild = floor(s)
-        else:
-            p_tild = ceil(s)
-
-        return round(min(p, p_tild))
-
-
 class GeneralModel(Model):
     name = "General"
 
@@ -134,7 +111,7 @@ class Power50Model(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c * (nb_proc)**(0.5)
+        return w *(1/ nb_proc + c * (nb_proc)**(0.5))
 
     def p_max(self, task: Task, p: int) -> int:  # TODO
         w, c = task.get_w(),task.get_c()
@@ -158,7 +135,7 @@ class Power75Model(Model):
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
-        return w / nb_proc + c * (nb_proc)**(0.75)
+        return w *(1/ nb_proc + c * (nb_proc)**(0.75))
 
     def p_max(self, task: Task, p: int) -> int:  # TODO
         w, c = task.get_w(),task.get_c()
@@ -169,6 +146,31 @@ class Power75Model(Model):
             p_tild = ceil(s)
 
         return round(min(p, p_tild))
+
+
+
+class CommunicationModel(Model):
+    name = "Communication"
+
+    def get_alpha(self) -> float:
+        return 4 / 3
+
+    def get_mu(self) -> float:
+        return (23 - sqrt(313)) / 18
+
+    def time(self, task: Task, nb_proc: int) -> float:
+        w, c = task.get_w(), task.get_c()
+        return w *(1/ nb_proc + c * (nb_proc - 1))
+
+    def p_max(self, task: Task, p: int) -> int:
+        s = sqrt(1/ task.get_c())
+        if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
+            p_tild = floor(s)
+        else:
+            p_tild = ceil(s)
+
+        return round(min(p, p_tild))
+
 
 
 class Power100Model(Model):
@@ -192,4 +194,4 @@ class Power100Model(Model):
         else:
             p_tild = ceil(s)
 
-        return round(min(p, task.get_p(), p_tild))
+        return round(min(p, p_tild))

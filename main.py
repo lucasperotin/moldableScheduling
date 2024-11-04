@@ -16,24 +16,24 @@ def compute_and_save_all():
 
 def display_all():
     for par in parameters:
-        display_results(par,'Results/'+par+"/")
+        display_results(par,'Results/'+par+"/",False)
+        
+
+def display_all_boxplot():
+    for par in parameters:
+        display_results(par,'Results/'+par+"/",True)
 
 
 start_time = time.process_time_ns()
 
-generate_daggen()
-genTaskFiles()
+#generate_daggen()
+#genTaskFiles()
 compute_and_save_all()
 display_all()
+display_all_boxplot()
 
 
 end_time = time.process_time_ns()
 
 print(f"Finished computing in {(end_time-start_time)/(10**9):.3f}s")
-
-
-
-# To compare the two version of the processor allocation algorithm with standard parameters
-
-# display_results_boxplot("V1", "V3", "Merging_V1_and_V3")
 
