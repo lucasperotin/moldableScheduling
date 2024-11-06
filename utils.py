@@ -64,7 +64,7 @@ def generate_daggen():
 
     for main_folder, varlist in variations.items():
         print("Generating daggen : "+f"{main_folder.split('_')[0]}")
-        if (varlist==n_list):
+        if (varlist==n_list and nMain nt in n_list):
             var_list=varlist+[nMain]
         else:
             var_list=varlist
