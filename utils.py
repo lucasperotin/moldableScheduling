@@ -62,8 +62,12 @@ def generate_daggen():
         "Regular_variation": regular_list
     }
 
-    for main_folder, var_list in variations.items():
+    for main_folder, varlist in variations.items():
         print("Generating daggen : "+f"{main_folder.split('_')[0]}")
+        if (varlist==n_list):
+            var_list=varlist+[nMain]
+        else:
+            var_list=varlist
         for value in var_list:
             subfolder = f"{main_folder.split('_')[0]}={value}"
             subfolder_path = os.path.join(daggen_output_dir, main_folder, subfolder)
@@ -164,13 +168,17 @@ def genTaskFiles():
     # Recreate the TASKS folder
     os.makedirs(tasks_dir)
     
+    if nMain not in n_list:
+        nlist2=n_list+[nMain]
+    else:
+        nlist2=n_list
     # Create subfolders for each n value
-    for n in n_list:
+    for n in nlist2:
         subfolder = os.path.join(tasks_dir, f"n={n}")
         os.makedirs(subfolder)
     
     # Generate task files
-    for n in n_list:
+    for n in nlist2:
         print(f"Generating speedups : n={n}")
         subfolder = os.path.join(tasks_dir, f"n={n}")
         for i in range(nb_iterations):
@@ -238,8 +246,7 @@ def compute_and_save(variation_parameter, result_directory):
         variation_list=jump_list
     elif variation_parameter == 'Priority':
         variation_list=priority_list
-        
-        
+    
     nbpar=len(variation_list)  
     # for j in range(len(name_list)):
     start_time = time.process_time_ns()
@@ -280,10 +287,8 @@ def compute_and_save(variation_parameter, result_directory):
                 edges,ww = extract_dependencies_from_csv(daggen_file)
                 if (USEWDAG):
                     for j in range(len(nodes)):
-                        #print(nodes[i].get_w())
                         nodes[j].set_w(ww[j])
-                        #print(nodes[i].get_w())
-                #print(daggen_file)
+                        
                 if (mu==0):
                     mu_tild = model.get_mu()
                 else:
@@ -304,8 +309,11 @@ def compute_and_save(variation_parameter, result_directory):
                 else:
                     priority=priorityMain
                     
-
+                #print(daggen_file)
                 task_graph = Graph(nodes, edges)
+                #for i in range(len(nodes)):
+                #    print(i,nodes[i].get_name())
+                #    print(task_graph.get_children(i))
                 processors = Processors(P_tild)
 
                 logging.debug("\nmodel : " + model.name,variation_parameter + " = " + str(variation_list[k]) + ", file :" + str(i))
@@ -321,6 +329,7 @@ def compute_and_save(variation_parameter, result_directory):
                 
                 
                 for heu in Heuristics:
+                    task_graph = Graph(nodes, edges)
                     if (heu=="ICPP22"):
                         row+=[str(processors.online_scheduling_algorithm(task_graph, 1, alpha=alpha_tild,
                                                                              mu_tild=mu_tild
@@ -346,7 +355,6 @@ def compute_and_save(variation_parameter, result_directory):
                         print("Error : unknown Heuristic")
                         os._exit()
                         
-                # print("end"
                 row+=[str(time_opt)]
                 row+=[str(amin/P_tild)]
                 row+=[str(cpmin)]
@@ -393,9 +401,9 @@ def display_results(variation_parameter, result_directory,boxplot):
                     if (row[0]==(str) (variation_list[k])):
                         index=k
                 for k in range(nbheur):
-                    HeurResults[k][index]+=[float(row[k+1]) / float(row[nbheur+1])]
-                BoundResults[0][index]+=[float(row[nbheur+2])]
-                BoundResults[1][index]+=[float(row[nbheur+3])]
+                    HeurResults[k][index]+=[float(row[k+1]) / float(row[-3])]
+                BoundResults[0][index]+=[float(row[-2])]
+                BoundResults[1][index]+=[float(row[-1])]
         f.close()
         if boxplot:
             # Add reversed figure for "Priority" variation parameter
@@ -475,20 +483,26 @@ def display_results(variation_parameter, result_directory,boxplot):
             
         else:
             f = open(result_directory + model.name + "/mean.csv", 'w', newline='')
+            g = open(result_directory + model.name + "/max.csv", 'w', newline='')
             writer = csv.writer(f)
+            writer2 = csv.writer(g)
             mean_Heurs = [[] for i in range (nbheur)]
             mean_Bound=[[] for i in range(2)]
             
             for k in range(nbpar):
                 row=[variation_list[k]]
+                row2=[variation_list[k]]
                 for i in range(nbheur):
                     mean_Heurs[i]+=[mean(HeurResults[i][k])]
                     row+=[mean(HeurResults[i][k])]
+                    row2+=[max(HeurResults[i][k])]
                 mean_Bound[0]+=[mean(BoundResults[0][k])]
                 mean_Bound[1]+=[mean(BoundResults[1][k])]
                 writer.writerow(row)
+                writer2.writerow(row2)
                 #print(mean_Paper)
             f.close()
+            g.close()
 
         # Graphic parameters for the display
         
@@ -498,15 +512,20 @@ def display_results(variation_parameter, result_directory,boxplot):
             plt.legend()
             plt.ylabel("Normalized Makespan")
             plt.title(model.name)
+            
+
             if variation_parameter == "P" and logP:
                 plt.xscale('log')
-            p_values = sorted(set(variation_list))
-            plt.xticks(p_values)
-            plt.gca().xaxis.set_major_formatter(plt.ScalarFormatter())
-            plt.gca().xaxis.set_tick_params(which='minor', size=0)
-            plt.gca().xaxis.set_tick_params(which='minor', width=0)
-    
-    
+                p_values = sorted(set(variation_list))
+                plt.xticks(p_values)
+                plt.gca().xaxis.set_major_formatter(plt.ScalarFormatter())
+                plt.gca().xaxis.set_tick_params(which='minor', size=0)
+                plt.gca().xaxis.set_tick_params(which='minor', width=0)
+            elif variation_parameter == "Priority":
+                plt.xticks(range(len(variation_list)), variation_list)
+            else:
+                p_values = sorted(set(variation_list))
+                plt.xticks(p_values)
             plt.savefig(result_directory + variation_parameter + "_" + model.name)
             plt.close()
             

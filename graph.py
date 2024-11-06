@@ -33,6 +33,7 @@ class Graph:
         self._children = []  # list of lists where _children[i] contains all children of task i
         self._parents = []   # list of lists where _parents[i] contains all parents of task i
         self._initialize_relationships()
+        self.set_nb_par_left_for_all_tasks()
 
     def _initialize_relationships(self):
         if not self._nodes:
@@ -45,7 +46,12 @@ class Graph:
         for parent, child in self._edges:
             self._children[parent].append(child)
             self._parents[child].append(parent)
-
+        
+    def set_nb_par_left_for_all_tasks(self):
+        for i, task in enumerate(self._nodes):
+            num_parents = len(self._parents[i])
+            task.set_nb_par_left(num_parents)
+        
     def get_children(self, task):
         """Return a list of the children of a certain task. The argument 'task' takes an int value corresponding
         to the index of the task in the nodes list"""

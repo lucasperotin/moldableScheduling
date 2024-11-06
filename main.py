@@ -25,9 +25,9 @@ def run_in_parallel(func, iterable):
         p.map(func, iterable)
 
 if __name__ == '__main__':
-    #generate_daggen()
-    #genTaskFiles()
-    #run_in_parallel(compute_and_save_wrapper, parameters)
-    #run_in_parallel(display_wrapper, parameters)
-    #run_in_parallel(display_boxplot_wrapper, parameters)
-    generate_latex_report(parameters, MODEL_LIST)
+    generate_daggen()    # Generate the graphs (dependencies and length of each task) using DAGGEN. 
+    genTaskFiles()       # Generate the speedup functions of task
+    run_in_parallel(compute_and_save_wrapper, parameters)   # Do the simulations (suggestion, delete previous Results folder if you redo simulation : this function will either replace preexisting files if exists, or create new files)
+    run_in_parallel(display_wrapper, parameters)            # Generate graphs in forms of lines, one line per heuristic. Will also generate figure for area/critical path
+    run_in_parallel(display_boxplot_wrapper, parameters)    # Generate graphs but with boxplots
+    generate_latex_report("results_visualization.tex")      # Organize all generated graphs in a latex file

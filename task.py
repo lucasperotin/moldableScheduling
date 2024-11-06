@@ -11,6 +11,7 @@ from math import *
 from parameters import *
 from model import Model
 from enum import Enum
+import os
 
 
 class Status(Enum):
@@ -160,45 +161,57 @@ class Task:
         p_max = self.get_p_max(P, speedup_model)
         t_min = self.get_execution_time(p_max, speedup_model)
         a_min = self.get_execution_time(1, speedup_model)
-        #print(w,p,d,c,t_min)
-
-        if version == 0:
-            Alpha_min = inf
-            final_nb_processors = -1
-
-            for i in range(1, p_max + 1):
-                Alphatemp = self.get_area(i, speedup_model) / a_min
-                Beta = self.get_execution_time(i, speedup_model) / t_min
-
-                if Beta < (1 - 2 * mu_tild) / (mu_tild * (1 - mu_tild)):
-                    if Alphatemp < Alpha_min:
-                        Alpha_min = Alphatemp
-                        final_nb_processors = i
-
-        elif version == 1:
-            Beta_min = inf
-            final_nb_processors = -1
-
-            for i in range(1, p_max + 1):
-                Alphatemp = self.get_area(i, speedup_model) / a_min
-                Beta = self.get_execution_time(i, speedup_model) / t_min
-
-                if Alphatemp <= alpha:
-                    if Beta < Beta_min:
-                        Beta_min = Beta
-                        final_nb_processors = i
-        elif version == 2:
-            max_alpha_beta_min = float('inf')
-            final_nb_processors = -1
-            for i in range(1, p_max + 1):
-                Alphatemp = self.get_area(i, speedup_model) / a_min
-                Beta = self.get_execution_time(i, speedup_model) / t_min
-                max_alpha_beta = max(Alphatemp, Beta)
-                if max_alpha_beta < max_alpha_beta_min:
-                    max_alpha_beta_min = max_alpha_beta
-                    final_nb_processors = i
         
+        def dichotomy_search_v0(self, low, high, speedup_model, a_min, t_min, mu_tild):
+            while high - low > 1:
+                mid = (low + high) // 2
+                Beta = self.get_execution_time(mid, speedup_model) / t_min
+                if Beta <= (1 - 2 * mu_tild) / (mu_tild * (1 - mu_tild)):
+                    high = mid
+                else:
+                    low = mid
+            return low if self.get_execution_time(low, speedup_model) / t_min <= (1 - 2 * mu_tild) / (mu_tild * (1 - mu_tild)) else high
+        
+        def dichotomy_search_v1(self, low, high, speedup_model, a_min, t_min, alpha):
+            while high - low > 1:
+                mid = (low + high) // 2
+                Alphatemp = self.get_area(mid, speedup_model) / a_min
+                if Alphatemp <= alpha:
+                    low = mid
+                else:
+                    high = mid
+            return high if self.get_area(high, speedup_model) / a_min <= alpha else low 
+        
+        def dichotomy_search_v2(self, low, high, speedup_model, a_min, t_min):
+            while high - low > 1:
+                mid = (low + high) // 2
+                Alphatemp = self.get_area(mid, speedup_model) / a_min
+                Beta = self.get_execution_time(mid, speedup_model) / t_min
+                if Alphatemp < Beta:
+                    low = mid
+                else:
+                    high = mid
+            return low
+        
+        if version == 0:
+            final_nb_processors = dichotomy_search_v0(self, 1, p_max, speedup_model, a_min, t_min, mu_tild)
+        
+        elif version == 1:
+            final_nb_processors = dichotomy_search_v1(self, 1, p_max, speedup_model, a_min, t_min, alpha)
+        
+        elif version == 2:
+            p = dichotomy_search_v2(self, 1, p_max, speedup_model, a_min, t_min)
+            Alpha_p = self.get_area(p, speedup_model) / a_min
+            Beta_p = self.get_execution_time(p, speedup_model) / t_min
+            Alpha_p1 = self.get_area(p + 1, speedup_model) / a_min
+            Beta_p1 = self.get_execution_time(p + 1, speedup_model) / t_min
             
+            if max(Alpha_p, Beta_p) <= max(Alpha_p1, Beta_p1):
+                final_nb_processors = p
+            else:
+                final_nb_processors = p + 1
+        
+        
         if version==2:
             mu_tild=(3-sqrt(5))/2
         # Step 2 : Allocation Adjustment

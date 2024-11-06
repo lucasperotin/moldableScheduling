@@ -46,10 +46,10 @@ class RooflineModel(Model):
     name = "Roofline"
 
     def get_alpha(self) -> float:
-        return 1
+        return 1.0000001
 
     def get_mu(self) -> float:
-        return (3 - sqrt(5)) / 2
+        return (3 - sqrt(5)) / 2-0.0000001
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, d, p, c = task.get_w(), task.get_d(), task.get_p(), task.get_c()

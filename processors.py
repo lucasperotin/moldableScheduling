@@ -108,7 +108,7 @@ class Processors:
         looptest=-1
         infloo=0
         while waiting_queue or process_list:
-            #print(nbloo)
+            #print(nbloo, self.get_time())
             #print("1")
             nbloo+=1
             # Cleaning of the processors
@@ -128,17 +128,17 @@ class Processors:
                 #print("Task "+(str) (task.get_name()) +" is completed "+(str) (self.get_time()))
                 self.available_processors += task.get_allocation()
                 for child in task_graph.get_children(nodes.index(task)):
-                    if nodes[child].get_status() == Status.BLOCKED:
-                        parents = task_graph.get_parents(child)
-                        available = True
-                        for parent in parents:
-                            if nodes[parent].get_status() != Status.PROCESSED:
-                                available = False
-                                break
-                        if available:
-                            nodes[child].set_status(Status.AVAILABLE)
-                            nodes[child].set_discovery_time(self.get_time())
-                            available_tasks.add(nodes[child])
+                    nodes[child].set_nb_par_left(nodes[child].get_nb_par_left()-1)
+                    if (nodes[child].get_nb_par_left()<0):
+                        print (nodes[child].get_name(), len(task_graph.get_parents(child)), nodes[child].get_nb_par_left())
+                        print("Error task already ready")
+                        os._exit()
+                        
+                    elif (nodes[child].get_nb_par_left()==0):
+                        
+                        nodes[child].set_status(Status.AVAILABLE)
+                        nodes[child].set_discovery_time(self.get_time())
+                        available_tasks.add(nodes[child])
 
             # Processor allocation
             #print("2")
