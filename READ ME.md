@@ -59,3 +59,6 @@ There are 2 importants files to modify
 
 
 	
+
+
+For any question, feel free to reach me lucas.perotin@ens-lyon.fr, I'm very available for a quick call or any issue with the code.
