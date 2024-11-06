@@ -1,6 +1,9 @@
+USAGE :
+- open a terminal
+- Go to daggen-master folder, type make
+- Go back to main folder, type python3 main.py
 
-There are 2 importants files to modify
-
+There are 2 importants files you may want to modify
 - parameters.py : Contains all the parameters of the simulation, 
 	Let's first take a look at the first 3 lists:
 	* MODEL_LIST : All different models. (I removed Power0 since it's equivalent to Amdahl). The descriptions can be found in the paper and internship reports. 
@@ -17,8 +20,8 @@ There are 2 importants files to modify
 		- "Regular","Density","Fat", "Jump" : parameters for the shape of the graph, see https://github.com/frs69wq/daggen
 		- "n" : number of tasks in the graph
 		- "P" : number of processors available
-		- "Priority" : priority rule. In the algorithm, at each step the tasks that are ready will be in a list, and the scheduler will go through the list to try to schedule them.
-					      The priority argument decides how the list is sorted and what task will be chosen first by the scheduler. See later for more info on the different options
+		- "Priority" : priority rule. In the algorithm, at each step the tasks that are ready will be in a list, and the scheduler will go through the list to try to schedule them. The priority argument decides how the list is sorted and what task will be chosen first by the scheduler. See later for more info on the different options
+	To add new parameters, you will need to look up a little more code in utils.py, specifically in compute_and_save
 
 	These 3 lists will define our list of experiments, there will be graphs generated for any possible couples (model, parameters) and in thoses graphs all the heuristics will be represented,
 	and the x axis will correspond to the different possible value of the parameter in parameters that is varied
@@ -57,8 +60,5 @@ There are 2 importants files to modify
 		- 5 : Same with maximum, to check the theoretical results are true.
 
 
-
-	
-
-
+It should be rather easy to add new parameters, heuristics or models. 
 For any question, feel free to reach me lucas.perotin@ens-lyon.fr, I'm very available for a quick call or any issue with the code.
