@@ -64,7 +64,7 @@ def generate_daggen():
 
     for main_folder, varlist in variations.items():
         print("Generating daggen : "+f"{main_folder.split('_')[0]}")
-        if (varlist==n_list and nMain nt in n_list):
+        if (varlist==n_list and nMain not in n_list):
             var_list=varlist+[nMain]
         else:
             var_list=varlist
@@ -330,31 +330,8 @@ def compute_and_save(variation_parameter, result_directory):
                 
                 for heu in Heuristics:
                     task_graph = Graph(nodes, edges)
-                    if (heu=="ICPP22"):
-                        row+=[str(processors.online_scheduling_algorithm(task_graph, 1, alpha=alpha_tild,
-                                                                             mu_tild=mu_tild
-                                                                             , priority= priority, speedup_model=speedup_model, P_tild=P_tild
-                                                                             , version=0))]
-                    elif (heu=="TOPC24"):
-                        row+=[str(processors.online_scheduling_algorithm(task_graph, 1, alpha=alpha_tild,
-                                                                              mu_tild=mu_tild
-                                                                             , priority= priority, speedup_model=speedup_model, P_tild=P_tild
-                                                                             , version=1))]
-                    elif (heu=="Fair"):
-                        row+=[str(processors.online_scheduling_algorithm(task_graph, 1, alpha=alpha_tild,
-                                                                              mu_tild=mu_tild
-                                                                             , priority= priority, speedup_model=speedup_model, P_tild=P_tild
-                                                                             , version=2))]
-                        
-                    elif(heu=="minTime"):
-                        row+=[str(processors.online_scheduling_algorithm(task_graph, 2, alpha=alpha_tild,
-                                                                          mu_tild=mu_tild
-                                                                         , priority= priority, speedup_model=speedup_model, P_tild=P_tild
-                                                                         , version=0))]
-                    else:
-                        print("Error : unknown Heuristic")
-                        os._exit()
-                        
+                    row+=[str(processors.online_scheduling_algorithm(task_graph, alpha=alpha_tild,mu_tild=mu_tild
+                                            , priority= priority, speedup_model=speedup_model, P_tild=P_tild, heuristic=heu))]
                 row+=[str(time_opt)]
                 row+=[str(amin/P_tild)]
                 row+=[str(cpmin)]

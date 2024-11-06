@@ -146,7 +146,7 @@ class Task:
         """"Allocating more than p_max processors to the task will no longer decrease its execution time"""
         return speedup_model.p_max(self, P)
 
-    def allocate_processor_algo(self, P, mu_tild, alpha, speedup_model: Model, version):
+    def allocate_processor(self, heuristic, P, mu_tild, alpha, speedup_model: Model):
         """
         Return the number of processors needed to compute a given task. It's the implementation of the algorithm 2
         from the paper.
@@ -156,7 +156,13 @@ class Task:
 
 
         """
-
+        if (heuristic=="minTime"): 
+            self.set_allocation(self.get_minimum_execution_time(P, speedup_model)[1])
+            return 
+        
+        if (heuristic=="minArea"): 
+            self.set_allocation(self.get_minimum_area(P, speedup_model)[1])
+            
         # Step 1 : Initial Allocation
         p_max = self.get_p_max(P, speedup_model)
         t_min = self.get_execution_time(p_max, speedup_model)
@@ -192,14 +198,13 @@ class Task:
                 else:
                     high = mid
             return low
-        
-        if version == 0:
+        if heuristic=="ICPP22":
             final_nb_processors = dichotomy_search_v0(self, 1, p_max, speedup_model, a_min, t_min, mu_tild)
         
-        elif version == 1:
+        elif heuristic == "TOPC24":
             final_nb_processors = dichotomy_search_v1(self, 1, p_max, speedup_model, a_min, t_min, alpha)
         
-        elif version == 2:
+        elif heuristic == "Fair":
             p = dichotomy_search_v2(self, 1, p_max, speedup_model, a_min, t_min)
             Alpha_p = self.get_area(p, speedup_model) / a_min
             Beta_p = self.get_execution_time(p, speedup_model) / t_min
@@ -212,7 +217,7 @@ class Task:
                 final_nb_processors = p + 1
         
         
-        if version==2:
+        if heuristic == "Fair":
             mu_tild=(3-sqrt(5))/2
         # Step 2 : Allocation Adjustment
         if final_nb_processors > ceil(mu_tild * P):
@@ -231,10 +236,3 @@ class Task:
         area_min = self.get_execution_time(1, speedup_model)
         return [area_min, 1]
 
-    def allocate_processor_Min_time(self, P, speedup_model: Model):
-        """Allocate the processor to minimize the execution time of the task"""
-        self.set_allocation(self.get_minimum_execution_time(P, speedup_model)[1])
-
-    def allocate_processor_Min_area(self, P, speedup_model: Model):
-        """Allocate the processor to minimize the area of the task"""
-        self.set_allocation(self.get_minimum_area(P, speedup_model)[1])

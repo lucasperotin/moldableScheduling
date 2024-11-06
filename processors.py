@@ -63,8 +63,8 @@ class Processors:
     # Methods
     ############################################################
 
-    def online_scheduling_algorithm(self, task_graph, allocation_function, alpha,
-                                    P_tild, mu_tild, priority = "FIFO", speedup_model: Model = GeneralModel(), version=0,save_in_logs=False):
+    def online_scheduling_algorithm(self, task_graph, alpha,
+                                    P_tild, mu_tild, priority = "FIFO", speedup_model: Model = GeneralModel(), heuristic="minTime",save_in_logs=False):
         """"
         Given a task graph, this function calculate the time needed to complete every task of the task graph.
         It's the implementation of the algorithm 1 from the paper. Concerning the allocation_function :
@@ -74,13 +74,6 @@ class Processors:
         """
         logging.debug("  ---- Starting ----")
         logging.debug("Number of processors :", self.get_nb_processors())
-        if allocation_function == 1:
-            logging.debug("Allocation algorithm : Paper")
-        elif allocation_function == 2:
-            logging.debug("Allocation algorithm : Min Time")
-        elif allocation_function == 3:
-            logging.debug("Allocation algorithm : Min Area")
-
         waiting_queue = set()  # Initialize a waiting queue Q
         process_list = []  # List of the task being processed
         nodes = task_graph.get_nodes()
@@ -93,12 +86,7 @@ class Processors:
 
         for task in nodes:  # Insert all tasks without parents in the waiting queue
             if not task_graph.get_parents(nodes.index(task)):
-                if allocation_function == 1:
-                    task.allocate_processor_algo(P_tild, mu_tild, alpha, speedup_model, version)
-                elif allocation_function == 2:
-                    task.allocate_processor_Min_time(P_tild, speedup_model)
-                elif allocation_function == 3:
-                    task.allocate_processor_Min_area(P_tild, speedup_model)
+                task.allocate_processor(heuristic,P_tild, mu_tild, alpha, speedup_model)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
                 task.set_discovery_time(self.get_time())
                 waiting_queue.add(task)
@@ -143,12 +131,7 @@ class Processors:
             # Processor allocation
             #print("2")
             for task in available_tasks:
-                if allocation_function == 1:
-                    task.allocate_processor_algo(P_tild, mu_tild, alpha, speedup_model, version)
-                elif allocation_function == 2:
-                    task.allocate_processor_Min_time(P_tild, speedup_model)
-                elif allocation_function == 3:
-                    task.allocate_processor_Min_area(P_tild, speedup_model)
+                task.allocate_processor(heuristic,P_tild, mu_tild, alpha, speedup_model)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
                 waiting_queue.add(task)
                 task.set_status(Status.PROCESSING)
