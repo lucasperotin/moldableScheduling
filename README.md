@@ -49,7 +49,7 @@ There are 2 importants files to modify
     	* generate_latex_report("results_visualization.tex")      # Organize all generated graphs in a latex file
 
 
-	The code uses parallelism, by default on all different parameters you will experiment in. It is worth mentioning it also take cares about organizing the graph generated in a latex file, that consists of 5 Sections :
+	* The code uses parallelism, by default on all different parameters you will experiment in. It is worth mentioning it also take cares about organizing the graph generated in a latex file, that consists of 5 Sections :
 		- 1 : all plots with lines. For each couple (model, parameter) a graph is generated, x-axis is all different parameters, y-axis is normalized makespan (divided by lower bound), each line corresponds to a heuristic, average for all iteration
 		- 2 : Same plot but with box plot, to show 10th, 25th, 75th and 90th percentile, with all extreme values as little circles
 		- 3 : Critical Path and Lower bounds. If one is 10 times bigger than the other, probably you will want to change the parameters
