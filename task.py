@@ -162,6 +162,7 @@ class Task:
         
         if (heuristic=="minArea"): 
             self.set_allocation(self.get_minimum_area(P, speedup_model)[1])
+            return 
             
         # Step 1 : Initial Allocation
         p_max = self.get_p_max(P, speedup_model)
