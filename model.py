@@ -11,6 +11,8 @@ class Model:
 
     def get_mu(self) -> float:
         raise NotImplementedError
+    def get_muB(self) -> float:
+        raise NotImplementedError
 
     def time(self, task, nb_proc: int) -> float:
         raise NotImplementedError

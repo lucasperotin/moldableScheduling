@@ -9,6 +9,8 @@ class AmdahlModel(Model):
     def get_alpha(self) -> float:
         return (sqrt(2) + 1 + sqrt(2 * sqrt(2) - 1)) / 2
 
+    def get_muB(self) -> float:
+        return 0.271
     def get_mu(self) -> float:
         return (1 - sqrt(8 * sqrt(2) - 11)) / 2
 
@@ -27,6 +29,10 @@ class GeneralModel(Model):
 
     def get_mu(self) -> float:
         return (33 - sqrt(738)) / 27
+    
+    
+    def get_muB(self) -> float:
+        return 0.211
 
     def time(self, task: Task, nb_proc: int) -> float:
         w, d, p, c = task.get_w(), task.get_d(), task.get_p(), task.get_c()
@@ -49,8 +55,11 @@ class RooflineModel(Model):
         return 1.0000001
 
     def get_mu(self) -> float:
-        return (3 - sqrt(5)) / 2-0.0000001
+        return (3 - sqrt(5)) / 2
 
+    def get_muB(self) -> float:
+        return (3 - sqrt(5)) / 2
+    
     def time(self, task: Task, nb_proc: int) -> float:
         w, d, p, c = task.get_w(), task.get_d(), task.get_p(), task.get_c()
         return w / min(nb_proc, p)
@@ -59,22 +68,34 @@ class RooflineModel(Model):
         return min(ceil(task.get_p()), p)
 
 
-# class Power0Model:
-#     name = "Power0"
+class PowerComModel(Model):
+    name = "PowerCom"
 
-#     def get_alpha(self) -> float:
-#         return 1.88  # TODO: get exact values
+    def get_alpha(self) -> float:
+        return 2  # TODO: get exact values
 
-#     def get_mu(self) -> float:
-#         return 1/4.54
-
-#     def time(self, task: Task, nb_proc: int) -> float:
-#         w, c = task.get_w(), task.get_c()
-#         return w *(1/ nb_proc + c)
+    def get_mu(self) -> float:
+        return 1/4.56
     
-#     def p_max(self, task: Task, p: int) -> int:
-#         return p
+    def get_muB(self) -> float:
+        return 0.271
 
+    def time(self, task: Task, nb_proc: int) -> float:
+        w, c, p = task.get_w(), task.get_c(), task.get_p()
+        gamma=(p)/512.0
+        return w *(1/ nb_proc + c*nb_proc**gamma)
+    
+    def p_max(self, task: Task, p: int) -> int:  # TODO
+        w, c, pp = task.get_w(), task.get_c(), task.get_p()
+        gamma=(pp)/512.0
+        s = (1/(c*gamma))**(1/(1+gamma))
+        
+        if task.get_execution_time(floor(s), self) <= task.get_execution_time(ceil(s), self):
+            p_tild = floor(s)
+        else:
+            p_tild = ceil(s)
+
+        return round(min(p, p_tild))
 
 class Power25Model(Model):
     name = "Power25"
@@ -84,7 +105,12 @@ class Power25Model(Model):
 
     def get_mu(self) -> float:
         return 1/3.6
-
+    
+    
+    def get_muB(self) -> float:
+        return 1/3.6
+    
+    
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
         return w *(1/ nb_proc + c * (nb_proc)**(0.25))
@@ -108,7 +134,11 @@ class Power50Model(Model):
 
     def get_mu(self) -> float:
         return 1/3.5
-
+    
+    
+    def get_muB(self) -> float:
+        return 1/3.6
+    
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
         return w *(1/ nb_proc + c * (nb_proc)**(0.5))
@@ -132,7 +162,9 @@ class Power75Model(Model):
 
     def get_mu(self) -> float:
         return 1/3.48
-
+    
+    def get_muB(self) -> float:
+        return 1/3.6
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
         return w *(1/ nb_proc + c * (nb_proc)**(0.75))
@@ -158,6 +190,8 @@ class CommunicationModel(Model):
     def get_mu(self) -> float:
         return (23 - sqrt(313)) / 18
 
+    def get_muB(self) -> float:
+        return 0.382
     def time(self, task: Task, nb_proc: int) -> float:
         w, c = task.get_w(), task.get_c()
         return w *(1/ nb_proc + c * (nb_proc - 1))

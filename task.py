@@ -162,13 +162,15 @@ class Task:
         
         if (heuristic=="minArea"): 
             self.set_allocation(self.get_minimum_area(P, speedup_model)[1])
-            return 
+            return
             
         # Step 1 : Initial Allocation
         p_max = self.get_p_max(P, speedup_model)
         t_min = self.get_execution_time(p_max, speedup_model)
         a_min = self.get_execution_time(1, speedup_model)
-        
+        if (mu_tild==0 or mu_tild==1):
+            print(heuristic,mu_tild, heuristic, speedup_model)
+            
         def dichotomy_search_v0(self, low, high, speedup_model, a_min, t_min, mu_tild):
             while high - low > 1:
                 mid = (low + high) // 2
@@ -218,8 +220,6 @@ class Task:
                 final_nb_processors = p + 1
         
         
-        if heuristic == "Fair":
-            mu_tild=(3-sqrt(5))/2
         # Step 2 : Allocation Adjustment
         if final_nb_processors > ceil(mu_tild * P):
             self.set_allocation(ceil(mu_tild * P))

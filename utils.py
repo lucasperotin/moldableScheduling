@@ -246,6 +246,8 @@ def compute_and_save(variation_parameter, result_directory):
         variation_list=jump_list
     elif variation_parameter == 'Priority':
         variation_list=priority_list
+    elif variation_parameter == 'mu':
+        variation_list=mu_list
     
     nbpar=len(variation_list)  
     # for j in range(len(name_list)):
@@ -275,7 +277,7 @@ def compute_and_save(variation_parameter, result_directory):
                     daggen_file = "DAGGEN/" + variation_parameter + "_variation/" + variation_parameter + "=" + \
                                   str(n_list[k]) + "/" + str(i) + ".csv"
                     node_file = "TASKS/n=" + str(n_list[k]) + "/" + str(i) + ".csv"
-                elif variation_parameter == 'P' or variation_parameter=="Priority":
+                elif variation_parameter == 'P' or variation_parameter=="Priority" or variation_parameter=="mu":
                     daggen_file = "DAGGEN/n_variation/n="+(str)(nMain)+"/" + str(i) + ".csv"
                     node_file = "TASKS/n="+(str)(nMain)+"/" + str(i) + ".csv"
                 else:
@@ -289,10 +291,6 @@ def compute_and_save(variation_parameter, result_directory):
                     for j in range(len(nodes)):
                         nodes[j].set_w(ww[j])
                         
-                if (mu==0):
-                    mu_tild = model.get_mu()
-                else:
-                    mu_tild=mu
                     
                 if(alpha==0):
                     alpha_tild = model.get_alpha()
@@ -327,8 +325,22 @@ def compute_and_save(variation_parameter, result_directory):
                 #print(format_scientific(cpmin))
                 time_opt = max(amin/P_tild,cpmin)
                 
+                mu_tild=1
                 
                 for heu in Heuristics:
+                    if variation_parameter=="mu":
+                        mu_tild=variation_list[k]
+                    else:
+                        if (mumain==0):
+                            if (heu=="ICPP22"):
+                                mu_tild = model.get_muB()
+                            if (heu=="TOPC24"):
+                                mu_tild = model.get_mu()
+                            if (heu=="Fair"):
+                                mu_tild = (3 - sqrt(5)) / 2
+                        else:
+                            mu_tild=mumain
+                    
                     task_graph = Graph(nodes, edges)
                     row+=[str(processors.online_scheduling_algorithm(task_graph, alpha=alpha_tild,mu_tild=mu_tild
                                             , priority= priority, speedup_model=speedup_model, P_tild=P_tild, heuristic=heu))]
@@ -340,7 +352,7 @@ def compute_and_save(variation_parameter, result_directory):
 
 
 
-def display_results(variation_parameter, result_directory,boxplot):
+def display_results(variation_parameter, result_directory,boxplot):  #See coment line 367
             
     model_list = MODEL_LIST
     # name_list = ["Amdahl", "Communication", "General", "Roofline"]
@@ -359,14 +371,21 @@ def display_results(variation_parameter, result_directory,boxplot):
         variation_list=jump_list
     elif variation_parameter == 'Priority':
         variation_list=priority_list
+    elif variation_parameter == 'mu':
+        variation_list=mu_list
         
     nbpar=len(variation_list)
     nbheur=len(Heuristics)
     for model in model_list:
-        HeurResults=[[] for k in range(nbheur)]
+        if (model.name=="Amdahl"):
+            heuristics_to_plot=3
+        else:
+            heuristics_to_plot=4
+            
+        HeurResults2=[[] for k in range(nbheur)]
         BoundResults=[[] for k in range(2)]
         for k in range(nbheur):
-            HeurResults[k] = [[] for i in range(nbpar)]
+            HeurResults2[k] = [[] for i in range(nbpar)]
         for k in range(2):
             BoundResults[k] = [[] for i in range(nbpar)]
             
@@ -378,19 +397,20 @@ def display_results(variation_parameter, result_directory,boxplot):
                     if (row[0]==(str) (variation_list[k])):
                         index=k
                 for k in range(nbheur):
-                    HeurResults[k][index]+=[float(row[k+1]) / float(row[-3])]
+                    HeurResults2[k][index]+=[float(row[k+1]) / float(row[-3])]
                 BoundResults[0][index]+=[float(row[-2])]
                 BoundResults[1][index]+=[float(row[-1])]
         f.close()
+        HeurResults=HeurResults2[:heuristics_to_plot]
         if boxplot:
             # Add reversed figure for "Priority" variation parameter
             if variation_parameter == "Priority":
                 fig, ax = plt.subplots(figsize=(12, 6))
-                positions = np.arange(1, nbheur + 1)
+                positions = np.arange(1, heuristics_to_plot + 1)
                 width = 0.8 / len(variation_list)
                 
                 for k, priority in enumerate(variation_list):
-                    boxplot_data = [HeurResults[i][k] for i in range(nbheur)]
+                    boxplot_data = [HeurResults[i][k] for i in range(heuristics_to_plot)]
                     bp = ax.boxplot(boxplot_data, positions=positions + (k - (len(variation_list)-1)/2) * width, 
                                     widths=width, patch_artist=True, 
                                     whis=[10, 90],  # Set whiskers to 10th and 90th percentiles
@@ -407,8 +427,8 @@ def display_results(variation_parameter, result_directory,boxplot):
                 ax.set_xlabel("Heuristics")
                 ax.set_ylabel("Normalized Makespan")
                 ax.set_title(f"{model.name} - Priority Comparison")
-                ax.set_xticks(positions)
-                ax.set_xticklabels(Heuristics)
+                ax.set_xticks(range(heuristics_to_plot))
+                ax.set_xticklabels(Heuristics[:heuristics_to_plot])
                 
                 # Add legend for priorities
                 legend_elements = [plt.Rectangle((0, 0), 1, 1, facecolor=plt.cm.Set3(k / len(variation_list)), 
@@ -424,21 +444,21 @@ def display_results(variation_parameter, result_directory,boxplot):
                 
                 fig, ax = plt.subplots(figsize=(12, 6))
                 positions = np.arange(1, nbpar + 1)
-                width = 0.8 / nbheur
+                width = 0.8 / heuristics_to_plot
                 
-                for k in range(nbheur):
+                for k in range(heuristics_to_plot):
                     boxplot_data = [HeurResults[k][i] for i in range(nbpar)]
-                    bp = ax.boxplot(boxplot_data, positions=positions + (k - (nbheur-1)/2) * width, 
+                    bp = ax.boxplot(boxplot_data, positions=positions + (k - (heuristics_to_plot-1)/2) * width, 
                                     widths=width, patch_artist=True, 
                                     whis=[10, 90],  # Set whiskers to 10th and 90th percentiles
                                     medianprops={'color': 'black', 'linewidth': 1.5},
-                                    boxprops={'facecolor': plt.cm.Set3(k / nbheur), 'edgecolor': 'black'},
+                                    boxprops={'facecolor': plt.cm.Set3(k / heuristics_to_plot), 'edgecolor': 'black'},
                                     whiskerprops={'color': 'black', 'linewidth': 1.5},
                                     capprops={'color': 'black', 'linewidth': 1.5})
                     
                     # Add mean markers (stars)
                     means = [np.mean(data) for data in boxplot_data]
-                    ax.scatter(positions + (k - (nbheur-1)/2) * width, means, 
+                    ax.scatter(positions + (k - (heuristics_to_plot-1)/2) * width, means, 
                                marker='*', color='red', s=100, zorder=3)
             
                 ax.set_xlabel(variation_parameter)
@@ -449,9 +469,9 @@ def display_results(variation_parameter, result_directory,boxplot):
                 
                 
                 # Add legend (without mean star)
-                legend_elements = [plt.Rectangle((0, 0), 1, 1, facecolor=plt.cm.Set3(k / nbheur), 
+                legend_elements = [plt.Rectangle((0, 0), 1, 1, facecolor=plt.cm.Set3(k / heuristics_to_plot), 
                                                  edgecolor='black', label=Heuristics[k]) 
-                                   for k in range(nbheur)]
+                                   for k in range(heuristics_to_plot)]
                 ax.legend(handles=legend_elements, loc='upper right')
             
                 plt.tight_layout()
@@ -470,9 +490,9 @@ def display_results(variation_parameter, result_directory,boxplot):
                 row=[variation_list[k]]
                 row2=[variation_list[k]]
                 for i in range(nbheur):
-                    mean_Heurs[i]+=[mean(HeurResults[i][k])]
-                    row+=[mean(HeurResults[i][k])]
-                    row2+=[max(HeurResults[i][k])]
+                    mean_Heurs[i]+=[mean(HeurResults2[i][k])]
+                    row+=[mean(HeurResults2[i][k])]
+                    row2+=[max(HeurResults2[i][k])]
                 mean_Bound[0]+=[mean(BoundResults[0][k])]
                 mean_Bound[1]+=[mean(BoundResults[1][k])]
                 writer.writerow(row)
@@ -483,7 +503,7 @@ def display_results(variation_parameter, result_directory,boxplot):
 
         # Graphic parameters for the display
         
-            for k in range(nbheur):
+            for k in range(heuristics_to_plot):
                 plt.plot(variation_list, mean_Heurs[k], label=Heuristics[k])
             plt.xlabel(variation_parameter)
             plt.legend()

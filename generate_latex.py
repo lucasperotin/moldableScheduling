@@ -35,12 +35,29 @@ def generate_latex_report(filename="results_visualization.tex"):
                 r"\centering"
             ])
 
+
+            
             for i, model in enumerate(MODEL_LIST):
-                if i % 4 == 0 and i > 0:
+                # Append subfigure with the model's name
+                latex_content.append(
+                    f"\\subfloat[{model.name}]{{\\includegraphics[width=0.32\\textwidth]{{Results/{param}/{param}_{model.name}{figure_type}}}}}"
+                )
+            
+                # Add a new line after every third item for a new row
+                if i == 2:
                     latex_content.append(r"\\[2ex]")
-                latex_content.append(f"\subfloat[{model.name}]{{\includegraphics[width=0.23\\textwidth]{{Results/{param}/{param}_{model.name}{figure_type}}}}}")
-                if i % 4 != 3 and i < len(MODEL_LIST) - 1:
+                    # Place \hspace*{\fill} after the first and before the last element in the second row
+                    latex_content.append(r"\hspace*{\fill}")  # Start with fill for the second row
+                elif i < 2:  # First row between figures
                     latex_content.append("\\hfill")
+                elif i == 3:  # Between figures in the second row
+                    latex_content.append("\\hfill")
+            
+            # Ending with \hspace*{\fill} after the last figure to ensure centering on the second row
+            if len(MODEL_LIST) == 5:
+                latex_content.append(r"\hspace*{\fill}")
+
+
 
             latex_content.extend([
                 r"\caption{" + f"{section.rstrip('s')} for {param}" + r"}",
