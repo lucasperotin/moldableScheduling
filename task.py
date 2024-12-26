@@ -46,7 +46,6 @@ class Task:
         self._needed_time = needed_time
         self._starting_time = starting_time
         self._discovery_time = discovery_time
-        self._nbpar=nbpar
 
     ## Getters and Setters
     ############################################################
@@ -146,7 +145,7 @@ class Task:
         """"Allocating more than p_max processors to the task will no longer decrease its execution time"""
         return speedup_model.p_max(self, P)
 
-    def allocate_processor(self, heuristic, P, mu_tild, alpha, speedup_model: Model):
+    def allocate_processor(self, heuristic, P, mu_tild, alpha, ratio, speedup_model: Model):
         """
         Return the number of processors needed to compute a given task. It's the implementation of the algorithm 2
         from the paper.
@@ -158,11 +157,11 @@ class Task:
         """
         if (heuristic=="minTime"): 
             self.set_allocation(self.get_minimum_execution_time(P, speedup_model)[1])
-            return 
+            return 0
         
         if (heuristic=="minArea"): 
             self.set_allocation(self.get_minimum_area(P, speedup_model)[1])
-            return
+            return 0
             
         # Step 1 : Initial Allocation
         p_max = self.get_p_max(P, speedup_model)
@@ -216,15 +215,22 @@ class Task:
             
             if max(Alpha_p, Beta_p) <= max(Alpha_p1, Beta_p1):
                 final_nb_processors = p
+                ratio=max(Alpha_p, Beta_p)
             else:
                 final_nb_processors = p + 1
+                ratio=max(Alpha_p1, Beta_p1)
         
         
         # Step 2 : Allocation Adjustment
+        if heuristic=="Fair":
+            mu_tild=(2*ratio+1-(4*ratio**2+1)**0.5)/(2*ratio)
+            
         if final_nb_processors > ceil(mu_tild * P):
             self.set_allocation(ceil(mu_tild * P))
         else:
             self.set_allocation(final_nb_processors)
+            
+        return ratio
 
     def get_minimum_execution_time(self, P, speedup_model: Model):
         """Return the minimum execution time"""

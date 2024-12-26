@@ -85,11 +85,12 @@ def generate_latex_report(filename="results_visualization.tex"):
         for heuristic in Heuristics:
             heuristic_values = []
             for param in parameters:
-                csv_path = f"Results/{param}/{model.name}/mean.csv"
-                if os.path.exists(csv_path):
-                    df = pd.read_csv(csv_path, header=None)
-                    heuristic_index = Heuristics.index(heuristic) + 1  # +1 because the first column is the parameter value
-                    heuristic_values.extend(df.iloc[:, heuristic_index].tolist())
+                if param!="mu":
+                    csv_path = f"Results/{param}/{model.name}/mean.csv"
+                    if os.path.exists(csv_path):
+                        df = pd.read_csv(csv_path, header=None)
+                        heuristic_index = Heuristics.index(heuristic) + 1  # +1 because the first column is the parameter value
+                        heuristic_values.extend(df.iloc[:, heuristic_index].tolist())
             avg_value = sum(heuristic_values) / len(heuristic_values) if heuristic_values else 0
             model_averages[model.name].append(avg_value)
 
@@ -132,11 +133,12 @@ def generate_latex_report(filename="results_visualization.tex"):
         for heuristic in Heuristics:
             heuristic_values = []
             for param in parameters:
-                csv_path = f"Results/{param}/{model.name}/max.csv"
-                if os.path.exists(csv_path):
-                    df = pd.read_csv(csv_path, header=None)
-                    heuristic_index = Heuristics.index(heuristic) + 1  # +1 because the first column is the parameter value
-                    heuristic_values.extend(df.iloc[:, heuristic_index].tolist())
+                if param!="mu":
+                    csv_path = f"Results/{param}/{model.name}/max.csv"
+                    if os.path.exists(csv_path):
+                        df = pd.read_csv(csv_path, header=None)
+                        heuristic_index = Heuristics.index(heuristic) + 1  # +1 because the first column is the parameter value
+                        heuristic_values.extend(df.iloc[:, heuristic_index].tolist())
             max_value = max(heuristic_values) if heuristic_values else 0
             model_maximums[model.name].append(max_value)
 

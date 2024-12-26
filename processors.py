@@ -77,21 +77,36 @@ class Processors:
         waiting_queue = set()  # Initialize a waiting queue Q
         process_list = []  # List of the task being processed
         nodes = task_graph.get_nodes()
+        ratio=1
 
         # if save_in_logs:
         #     name = "logs/" + datetime.now().strftime("%m_%d_%Y-%H.%M.%S") + ".csv"
         #     log = open(name, 'w', newline='')
         #     writer = csv.writer(log)
         #     writer.writerow(['Time', 'Waiting Queue', 'Processors Queue', 'Number of available processors'])
-
+        newratio=1
         for task in nodes:  # Insert all tasks without parents in the waiting queue
             if not task_graph.get_parents(nodes.index(task)):
-                task.allocate_processor(heuristic,P_tild, mu_tild, alpha, speedup_model)
+                newratio=max(task.allocate_processor(heuristic,P_tild, mu_tild, alpha, ratio, speedup_model),newratio)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
                 task.set_discovery_time(self.get_time())
                 waiting_queue.add(task)
                 task.set_status(Status.PROCESSING)
-                
+        
+        if(newratio>ratio+0.000001):
+            ratio=newratio
+            for task in nodes:  # Insert all tasks without parents in the waiting queue
+                if not task_graph.get_parents(nodes.index(task)):
+                    newratio=max(task.allocate_processor(heuristic,P_tild, mu_tild, alpha, ratio, speedup_model),newratio)
+                    task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
+                    task.set_discovery_time(self.get_time())
+                    waiting_queue.add(task)
+                    task.set_status(Status.PROCESSING)
+                    
+        if(newratio>ratio+0.000001):
+            print("FATAL ERROR")
+            os.exit()
+            
         nbloo=0
         looptest=-1
         infloo=0
@@ -130,19 +145,25 @@ class Processors:
 
             # Processor allocation
             #print("2")
+            newratio=1
             for task in available_tasks:
-                task.allocate_processor(heuristic,P_tild, mu_tild, alpha, speedup_model)
+                newratio=max(task.allocate_processor(heuristic,P_tild, mu_tild, alpha, ratio, speedup_model),newratio)
                 task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
                 waiting_queue.add(task)
                 task.set_status(Status.PROCESSING)
-
-            # # Writing the status in the log
-            # if save_in_logs:
-            #     line = [self.get_time(), [nodes.index(task) for task in waiting_queue],
-            #             [nodes.index(task) for task in process_list],
-            #             self.get_available_processors()]
-            #     writer.writerow(line)
-
+                
+            if(newratio>ratio+0.000001):
+                ratio=newratio
+                for task in waiting_queue:
+                    newratio=max(task.allocate_processor(heuristic,P_tild, mu_tild, alpha, ratio, speedup_model),newratio)
+                    task.set_needed_time(task.get_execution_time(task.get_allocation(), speedup_model))
+                    waiting_queue.add(task)
+                    task.set_status(Status.PROCESSING)
+                    
+            
+            if(newratio>ratio+0.000001):
+                print("FATAL ERROR")
+                os.exit()
             # List Scheduling
             to_remove = set()
             #print("3")
@@ -167,6 +188,7 @@ class Processors:
         # if save_in_logs:
         #     log.close()
 
+        #print(speedup_model.name, ratio, "AAAAAA")
         # Resetting the status and the clock of the processors
         task_graph.init_status()
         final_time = self.get_time()
