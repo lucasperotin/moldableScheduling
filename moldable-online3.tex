@@ -52,7 +52,7 @@
 \newcommand\fair{\textsc{Fair}\xspace}
 \newcommand\ratio{R\xspace}
 \newcommand\newrat{\textsc{newR}\xspace}
-\newcommand\task{\mathbb{T}}
+\newcommand\task{\mathcal{T}}
 \newcommand\la{\ensuremath{\lambda}\xspace}
 \newcommand\pp{\ensuremath{\mathbf{p}}\xspace}
 \newcommand\pb{\ensuremath{\vec{p}}\xspace}
@@ -427,7 +427,7 @@ The framework is inspired by the analysis shown in \cite{Lepere01_DAG, Jansen06_
 \new{We start with a small lemma on the function $\mu(x)$ defined in Equation~\ref{eq.muR}}
 \begin{lemma}
 \label{lem.muprop}
-\new{$\mu(x)=\frac{2x+1-\sqrt{4x^2+1}}{2x}$ is well defined, positive and decreasing in $[1, \infty)$. Furthermore, $\mu(x) \leq \frac{3-\sqrt{5}}{2}$ and $\frac{x}{1-\mu(x)}$ increases with $x$.}
+\new{$\mu(x)=\frac{2x+1-\sqrt{4x^2+1}}{2x}$ is well defined, positive and decreasing in $[1, \infty)$. Furthermore, $\mu(x) \leq \frac{3-\sqrt{5}}{2}$ and $\frac{x}{1-\mu(x)}=\frac{1}{\mu(x)}-x$ increases with $x$.}
 \end{lemma}
 \begin{proof}
 \new{For $x\geq 1$, $\mu(x)$ has the same sign as $2x+1-\sqrt{4x^2+1} > 2x+1-\sqrt{4x^2+4x+1}=0$, hence it is well defined and positive. To show the other results, we first define $v(x)=\frac{x}{1-\mu(x)}$
@@ -552,7 +552,7 @@ $$\frac{T^{\new{k}}}{\new{\ratio_k}} \leq \left(\frac{1-\mu_{\new{k}}-z_{\new{k}
 
 \LP{New after this}
 
-We fix $f(z_{k})=\frac{1-\mu_{\new{k}}-z_{k}\ratio_k \mu_{k}-(1-z_{k})\mu_{k}}{(1-\mu_{k})\ratio_k}-\mu_{k} z_{k}+z_{k}-1$ and will show that we must have $f(z_{k}) \leq 0$ for $z_k \in [0,1]$ to upperbound the $T_2^k$ term by $0$. First let's derive this function in respect to $z_k$ :
+We fix $f(z_{k})=\frac{1-\mu_{k}-z_{k}\ratio_k \mu_{k}-(1-z_{k})\mu_{k}}{(1-\mu_{k})\ratio_k}-\mu_{k} z_{k}+z_{k}-1$ and will show that we must have $f(z_{k}) \leq 0$ for $z_k \in [0,1]$ to upperbound the $T_2^k$ term by $0$. First let's derive this function in respect to $z_k$ :
 
 $$ f'(z_k)=\frac{\mu_k(1-\ratio_k)}{(1-\mu_k)\ratio_k}+(1-\mu_k) = \frac{\mu_k + \ratio_k\left[(1-\mu_k)^2-\mu_k \right]}{(1-\mu_k)\ratio_k}$$
 
@@ -578,50 +578,28 @@ $$ T^{k}\leq \ratio_m L^{k,\opt}(f)+\frac{\ratio_m}{(1-\mu_m)}\frac{A^{k,\opt}}{
 
 Finally, 
 \begin{align*}
- T=\sum_k T^k \leq \sum
+ T&=\sum_k T^k \leq \sum_k \ratio_m L^{k,\opt}(f)+\frac{\ratio_m}{(1-\mu_m)}\frac{A^{k,\opt}}{P} \\
+ &= \ratio_m \sum_k L^{k,\opt}(f)+\frac{\ratio_m}{(1-\mu_m)} \sum_k \frac{A^{k,\opt}}{P} \\
+ & \leq \left( R_m +\frac{\ratio_m}{(1-\mu_m)}\right) T^{opt} =\frac{T^{opt}}{\mu_m}
 \end{align*}
-
+The last step uses another result from Lemma~\ref{lem.muprop} in which we shown $\frac{1}{\mu(x)}-x=\frac{1+\sqrt{4x^2+1}}{2}$, hence the result.
 \end{proof}
 
-\emph{Remarks.}~We point out that the two bounds shown in Lemma \ref{lem.makespan}, i.e., Inequalities (\ref{eq.arebound}) and (\ref{eq.timebound}), must be satisfied by all tasks in a task graph for the derived competitive ratio shown in Equation (\ref{eq.makespan}) to hold. In Section \ref{sec.comp-ratio}, we will prove that, for a given speedup model and regardless of the task parameters, there always exists a processor allocation that satisfies the two bounds with a particular $(\alpha, \beta)$ choice that achieves the minimum (or close to minimum) competitive ratio. We then show in Section \ref{sec.low} that the obtained competitive ratios are tight (or almost tight) by proving matching (or nearly matching) lower bounds for different speedup models.
-Thus, given an $(\alpha, \beta)$ pair for a speedup model, the processor allocation algorithm should find an allocation for each task to satisfy the two bounds. However, there could be multiple allocations that all satisfy the bounds. Among these allocations, Algorithm \ref{alg.allocate1} finds one that, subject to the $\alpha$ bound, minimizes the execution time of the task, thus satisfying the $\beta$ bound as well. Intuitively, this is a good practical choice and it also helps to simplify the analysis, which we will present in Section \ref{sec.comp-ratio}.
+\begin{remark}
+We can easily show that $\frac{T}{T^{opt}} \leq 2\ratio_m+\frac{1}{2}+\frac{1}{4\ratio_m}$
+\LP{For instance in moldable error (moldable independent tasks subject to failure, the ratio of LPA is $2R_m$ which is almost identical}
+\end{remark}
 
 
 
 
 
-\section{New stuff}
+\section{Special case for our speedup models}
 
-\begin{definition}
-We use the following speedup models
-\begin{itemize}
-\item Roofline model: $t(p)=\frac{w}{min(p,\bar{p}})$
-\item Communication model: $t(p)=\frac{w}{p}+c(p-1)$
-\item Amdahl model: $t(p)=\frac{w}{p}+d$
-\item General model: $t(p)=\frac{w}{min(p,\bar{p}}+d+c(p-1)$
-\item Extended communication model: $t(p)=\frac{w}{p}+p^{gamma}$
-\end{itemize}
-\end{definition}
-
-\begin{definition}
-For a given task $\task_i$ allocated with $p$ processors and speedup profile $t(p)$, we define $\alpha$ and $\beta$ as follows:
-\begin{itemize}
-\item $\alpha_i=\frac{a(p)}{a_{min}}$
-\item $\beta_i=\frac{t(p)}{t_{min}}$
-\end{itemize}
-\end{definition}
-
-
-\begin{theorem}
-If all tasks satisfy $\alpha_i \leq \alpha$ and $\beta_i \leq \beta$, and if $\mu \geq \frac{\alpha+\beta+1-\sqrt{(\alpha+\beta+1)^2-4\beta}}{2\beta}$, then the execution time verifies,
-$$T \leq \left( \beta+\frac{\alpha}{1-\mu} \right) T^{\opt}$$
-\end{theorem}
-
-
-
+For each model $M$, we will give a $\ratio^M$ such that any task following the model has a processor allocation verifying verifying $\frac{t(p)}{t_{min}}$ and $\frac{a(p)}{a_{min}}=1$
 
 \begin{lemma}\label{lem.roofline}
-For any task that follows the roofline speedup model, there exists a processor allocation that achieves $R^{\ROO}=1$.
+For any task that follows the roofline speedup model, there exists a processor allocation that achieves $R^{\ROO}=1$. The corresponding competitive ratio is $\frac{3+\sqrt{5}}{2} \approx 2.62$
 \end{lemma}
 
 \begin{proof}
@@ -631,7 +609,7 @@ Thus, this gives $\alpha^{\ROO} = \beta^{\ROO} = 1$.
 
 
 \begin{lemma}\label{lem.comm}
-For any task that follows the communication model, there exists a processor allocation that achieves $R^{\COM}=\sqrt{2}$.
+For any task that follows the communication model, there exists a processor allocation that achieves $R^{\COM}=\sqrt{2}$. The corresponding competitive ratio is $2+\sqrt{2} \approx 3.41$
 \end{lemma}
 
 \begin{proof}
@@ -659,7 +637,7 @@ This function is clearly decreasing with $w'$, and using $w'>49$, we get $\frac{
 \end{proof}
 
 \begin{lemma}\label{lem.amdahl}
-For any task that follows the Amdahl's model, there exists a processor allocation that achieves $R^{\AMD}=2$.
+For any task that follows the Amdahl's model, there exists a processor allocation that achieves $R^{\AMD}=2$. The corresponding competitive ratio is $\frac{5+\sqrt{17}}{2} \approx 4.56$
 \end{lemma}
 
 \begin{proof}
@@ -673,7 +651,7 @@ If $p=\min(\left\lceil \frac{w}{d} \right\rceil, P)$, $\frac{t(p)}{t^{\min}} \le
 
 
 \begin{lemma}
-For extended communication model, we can obtain $R=2.002$
+For extended communication model, we can obtain $R=2.0017$. The corresponding competitive ratio is approximetaly $4.56$.
 \end{lemma}
 
 
@@ -683,7 +661,7 @@ See Appendix A
 
 
 \begin{lemma}
-For General model, we can obtain $R^{GEN}=2.018$
+For General model, we can obtain $R^{GEN}=2.018$. The corresponding ratio is approximately $4.597$.
 \end{lemma}
 
 
@@ -701,24 +679,60 @@ We apply the 5 Lemmas with Theorem 1 and get the table :
 \label{tab.all-values}
 \begin{tabular}{| c | c | c | c | c | c | c |}
 \hline
-\textbf{Model $M$} & Best Possible (LB) & ICPP22 & TOPC24 & Fair($R^*$) & Fair(1) \\
+\textbf{Model $M$} & ICPP22 & TOPC24 & Fair($R^M$) & Fair(1) & Best Possible (LB)$^{**}$ \\
 \hline
-Roofline (\ROO) & $\frac{2}{3-\sqrt{5}} > 2.62$ & $2.62$ & $2.62$ & $2.62$ & $2.62$\\
+Roofline (\ROO) & $2.62$ & $2.62$ & $2.62$ & $2.62$ & $\frac{2}{3-\sqrt{5}} > 2.61$ \\
 \hline
-Comm. (\COM) & $\frac{18}{23-\sqrt{313}} > 3.39$ & $3.61$ & $3.391$  & $3.42$ & $3.70$ \\
+Comm. (\COM) & $3.61$ & $3.39$  & $3.41$ & $3.41$ & $\frac{18}{23-\sqrt{313}} > 3.39$ \\
 \hline
-Amdahl (\AMD) & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} > 4.54$  & $4.74$ & $4.55$ & $4.56$ & $5.24$\\
+Amdahl (\AMD) & $4.74$ & $4.55$ & $4.56$ & $4.56$ & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} > 4.54$ \\
 \hline
-General (\GEN) & $4.54$ & $5.72$ & $4.58^* (4.63)$ & $4.60$ & $5.29$\\
+General (\GEN) & $5.72$ & $4.58^* (4.63)$ & $4.597$ & $4.597$ & $4.54$ \\
 \hline
-Extended COM (COM2) & $4.54$ &  & $4.564^*$ & $4.566$ & $5.25$ \\
+Extended COM (COM2) &  &  & $4.56$ & $4.56$ & $4.54$ \\
 \hline
-Arbitrary & $\frac{\sqrt{P}}{2}^{**}$ &  &  & $2\sqrt{P}$ & $2.62\sqrt{P}$ \\
+Arbitrary (no superlinear speedup) &  &  & $2\sqrt{P}+1$ & $2\sqrt{P}+1$ & $\frac{\sqrt{P}}{2}-\frac{1}{4}^{***}$ \\
 \hline
 \end{tabular}
 \LP{*: New result when applying directly the $\alpha$,$\beta$ obtained in appendix}
-\LP{**: Absolute lower bound, without assuming local decision or list scheduling}
+\LP{**: Assuming local deterministic processor allocation (not based on state of the platform)}
+\LP{***: Absolute lower bound, without assuming local decision or list scheduling}
 \end{table*}
+
+\begin{remark}
+\fair(1) doesn't belong to the class of algorithms that has local deterministic processor allocation, since $\mu$ varies with time. However it is because it requires no knowledge of the model at first. If instead of initializing $R$ to $1$ we would initialize to $R^M$ for each different model, we would have the same competitive ratio and no  modification of $R$ and $\mu$ during the processing, hence the lower bounds would then apply.
+\end{remark}
+
+\section{Absolute lower bound for monotonic model}
+\LP{Probably too short to do a section? Can move it in previous section.}
+
+We consider $P=K^2$ identical tasks in $\sqrt{P}$ different layers of $\sqrt{P}$ independent tasks. More precisely, we denote tasks as $\task_{i,j}$ with $i \in [1, \sqrt{P}]$ and $j \in [1, \sqrt{P}]$. For each $i \in [1,\sqrt{P}-1]$ there exists a single $j_i$ such that $\task_{i,j_i}$ has successors, and its successors are $\task_{i+1,j}$ for all $j\in [1,\sqrt{P}]$. There are no further precedence constraints. We consider the time function to be of the form $t(p)=A-B(p-1)$ which is affine : each new processor reduces the time function by $B$. This type of function  doesn't achieve the highest possible lower bound, but we choose it since the function seems rather reasonable. More precisely, we chose $A$ and $B$ such that $t(1)=\sqrt{P}$ and $t(P)=1$, which corresponds to $A=\sqrt{P}$ and $B=\frac{\sqrt{P}-1}{P-1}$.
+
+
+\begin{theorem}
+Any algorithm may have an execution time at least $\frac{\sqrt{P}-1}{2}$ times higher than an optimal schedule.
+\end{theorem}
+
+\begin{proof}
+Since all tasks are indistinguishable, it is possible that for each $i$, $\task_{i,j_i}$ is the last completed task of the layer $i$. To upper-bound the execution time of a layer, we distinguish two cases:
+\begin{itemize}
+\item At least one task has at most $\sqrt{P}$ processors utilized. Then its time of processing is at least $t(\sqrt{P})=\sqrt{P}-(\sqrt{P}-1)\frac{\sqrt{P}-1}{P-1} =\sqrt{P} -\frac{P-2\sqrt{P}+1}{P-1} \geq \sqrt{P}-1$
+\item All tasks use more than $\sqrt{P}$ processors. Then the execution time is at least the area of the layer. Since the area increases with the number of processors, this area is at least $\frac{\sqrt{P}a(\sqrt{P})}{P}=\frac{Pt(\sqrt{P})}{P} \geq \sqrt{P}-1$
+\end{itemize}
+Therefore the total execution time of any algorithm could be higher than $\sqrt{P}$ times the upperbound of the execution time of each layer, and therefore we may always have $T\geq P-\sqrt{P}$.
+
+A feasible schedule would be to execute each $\task_{i,j_i}$ sequentially with $P$ processors, then all the remaing tasks with $1$ processors for an execution time of $\sqrt{P}-1+\sqrt{P} \geq T^{\opt}$. We get $\frac{T}{T^{\opt}} \geq \frac{P-\sqrt{P}}{2\sqrt{P}-1}=\frac{\sqrt{P}}{2}+\frac{\frac{\sqrt{P}}{2}}{2\sqrt{P}-1} \geq \frac{\sqrt{P}}{2}-\frac{1}{4}$
+\end{proof}
+ \LP{No need for figure?}
+
+
+
+
+
+
+
+
+
 
 
 \appendix
