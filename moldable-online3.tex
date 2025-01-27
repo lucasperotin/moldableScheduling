@@ -683,7 +683,7 @@ We apply the 5 Lemmas with Theorem 1 and get the table :
 \hline
 Roofline (\ROO) & $2.62$ & $2.62$ & $2.62$ & $2.62$ & $\frac{2}{3-\sqrt{5}} > 2.61$ \\
 \hline
-Comm. (\COM) & $3.61$ & $3.39$  & $3.41$ & $3.41$ & $\frac{18}{23-\sqrt{313}} > 3.39$ \\
+Comm. (\COM) & $3.61$ & $3.40$  & $3.41$ & $3.41$ & $\frac{18}{23-\sqrt{313}} > 3.39$ \\
 \hline
 Amdahl (\AMD) & $4.74$ & $4.55$ & $4.56$ & $4.56$ & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} > 4.54$ \\
 \hline
@@ -728,8 +728,9 @@ A feasible schedule would be to execute each $\task_{i,j_i}$ sequentially with $
 
 
 
+\section{Experiments}
 
-
+\section{Conclusion}
 
 
 
@@ -991,7 +992,271 @@ For the last inequality, we recognize the same term we had when bounding the are
 \end{itemize}
 \end{proof}
 
+\FloatBarrier 
+\newpage
+\section{Appendix : Full Experimental Results}
 
+\subsection{Lines Figures}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_Roofline}\caption{Roofline}\label{fig:lines_figures_Regular_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_Communication}\caption{Communication}\label{fig:lines_figures_Regular_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_Amdahl}\caption{Amdahl}\label{fig:lines_figures_Regular_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_General}\caption{General}\label{fig:lines_figures_Regular_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_PowerCom}\caption{PowerCom}\label{fig:lines_figures_Regular_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for Regular}
+\label{fig:lines_figures_Regular}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Roofline}\caption{Roofline}\label{fig:lines_figures_Density_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Communication}\caption{Communication}\label{fig:lines_figures_Density_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Amdahl}\caption{Amdahl}\label{fig:lines_figures_Density_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_General}\caption{General}\label{fig:lines_figures_Density_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_PowerCom}\caption{PowerCom}\label{fig:lines_figures_Density_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for Density}
+\label{fig:lines_figures_Density}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Roofline}\caption{Roofline}\label{fig:lines_figures_Fat_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Communication}\caption{Communication}\label{fig:lines_figures_Fat_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Amdahl}\caption{Amdahl}\label{fig:lines_figures_Fat_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_General}\caption{General}\label{fig:lines_figures_Fat_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_PowerCom}\caption{PowerCom}\label{fig:lines_figures_Fat_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for Fat}
+\label{fig:lines_figures_Fat}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Roofline}\caption{Roofline}\label{fig:lines_figures_n_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Communication}\caption{Communication}\label{fig:lines_figures_n_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Amdahl}\caption{Amdahl}\label{fig:lines_figures_n_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_General}\caption{General}\label{fig:lines_figures_n_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_PowerCom}\caption{PowerCom}\label{fig:lines_figures_n_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for n}
+\label{fig:lines_figures_n}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Roofline}\caption{Roofline}\label{fig:lines_figures_P_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Communication}\caption{Communication}\label{fig:lines_figures_P_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Amdahl}\caption{Amdahl}\label{fig:lines_figures_P_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_General}\caption{General}\label{fig:lines_figures_P_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_PowerCom}\caption{PowerCom}\label{fig:lines_figures_P_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for P}
+\label{fig:lines_figures_P}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Roofline}\caption{Roofline}\label{fig:lines_figures_Priority_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Communication}\caption{Communication}\label{fig:lines_figures_Priority_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Amdahl}\caption{Amdahl}\label{fig:lines_figures_Priority_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_General}\caption{General}\label{fig:lines_figures_Priority_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_PowerCom}\caption{PowerCom}\label{fig:lines_figures_Priority_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for Priority}
+\label{fig:lines_figures_Priority}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Roofline}\caption{Roofline}\label{fig:lines_figures_Jump_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Communication}\caption{Communication}\label{fig:lines_figures_Jump_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Amdahl}\caption{Amdahl}\label{fig:lines_figures_Jump_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_General}\caption{General}\label{fig:lines_figures_Jump_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_PowerCom}\caption{PowerCom}\label{fig:lines_figures_Jump_PowerCom}\end{subfigure}
+\hfill
+\caption{Lines Figure for Jump}
+\label{fig:lines_figures_Jump}
+\end{figure}
+
+
+
+
+\FloatBarrier 
+\subsection{Boxplot Figures}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Regular_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_Regular_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_Regular_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_General_boxplot}\caption{General}\label{fig:boxplot_figures_Regular_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Regular_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for Regular}
+\label{fig:boxplot_figures_Regular}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Density_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_Density_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_Density_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_General_boxplot}\caption{General}\label{fig:boxplot_figures_Density_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Density_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for Density}
+\label{fig:boxplot_figures_Density}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Fat_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_Fat_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_Fat_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_General_boxplot}\caption{General}\label{fig:boxplot_figures_Fat_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Fat_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for Fat}
+\label{fig:boxplot_figures_Fat}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_n_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_n_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_n_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_General_boxplot}\caption{General}\label{fig:boxplot_figures_n_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_n_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for n}
+\label{fig:boxplot_figures_n}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_P_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_P_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_P_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_General_boxplot}\caption{General}\label{fig:boxplot_figures_P_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_P_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for P}
+\label{fig:boxplot_figures_P}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Priority_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_Priority_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_Priority_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_General_boxplot}\caption{General}\label{fig:boxplot_figures_Priority_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Priority_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for Priority}
+\label{fig:boxplot_figures_Priority}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Jump_Roofline}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Communication_boxplot}\caption{Communication}\label{fig:boxplot_figures_Jump_Communication}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Amdahl_boxplot}\caption{Amdahl}\label{fig:boxplot_figures_Jump_Amdahl}\end{subfigure}
+\\[2ex]
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_General_boxplot}\caption{General}\label{fig:boxplot_figures_Jump_General}\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Jump_PowerCom}\end{subfigure}
+\hfill
+\caption{Boxplot Figure for Jump}
+\label{fig:boxplot_figures_Jump}
+\end{figure}
+
+
+\FloatBarrier 
+
+\subsection{Average Values}
+\begin{table}[htbp]
+\centering
+\caption{Average Values for Each Model and Heuristic}
+\label{tab:average_values}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & ICPP22 & TOPC24 & Fair & minTime & minArea \\
+Roofline & 1.28 & 1.28 & 1.28 & 1.52 & 11.28 \\
+Communication & 1.75 & 1.38 & 1.38 & 2.97 & 10.22 \\
+Amdahl & 2.32 & 1.98 & 2.01 & 21.31 & 7.88 \\
+General & 2.74 & 1.50 & 1.60 & 4.86 & 5.37 \\
+PowerCom & 1.52 & 1.46 & 1.35 & 2.84 & 12.76 \\
+\midrule
+Average & 1.92 & 1.52 & 1.52 & 6.70 & 9.50 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Maximum Values}
+\begin{table}[htbp]
+\centering
+\caption{Maximum Values for Each Model and Heuristic}
+\label{tab:maximum_values}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & ICPP22 & TOPC24 & Fair & minTime & minArea \\
+Roofline & 2.56 & 2.56 & 2.56 & 3.18 & 117.75 \\
+Communication & 2.22 & 2.17 & 2.30 & 8.45 & 34.30 \\
+Amdahl & 4.52 & 3.75 & 3.76 & 33.26 & 23.45 \\
+General & 5.11 & 2.64 & 2.70 & 10.34 & 14.76 \\
+PowerCom & 3.71 & 2.16 & 2.46 & 6.83 & 69.98 \\
+\midrule
+Maximum & 5.11 & 3.75 & 3.76 & 33.26 & 117.75 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\FloatBarrier 
 
 \bibliographystyle{plain}
 \bibliography{moldable}
