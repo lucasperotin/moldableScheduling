@@ -3,6 +3,8 @@ USAGE :
 - Go to daggen-master folder, type make
 - Go back to main folder, type python3 main.py
 
+This will generate the instances (graphs+task paramaters), run all the experiments using parameters in parameters.py described later, generate all figures+ generate a latex file including figures and tables for the experiments.
+
 There are 2 importants files you may want to modify
 - parameters.py : Contains all the parameters of the simulation, 
 	Let's first take a look at the first 3 lists:
