@@ -141,7 +141,7 @@ For the version with independent tasks, the tasks are released on the fly and th
 In this work, we investigate the most difficult instance of the problem, namely, the online scheduling of moldable tasks graphs, with the goal of minimizing the overall completion time, or the makespan.
 Our main contribution resides in the design of a new online algorithm and in several new competitive ratios,
 which greatly depend upon the speedup model of the tasks. Several common yet realistic speedup models have been introduced
-and analyzed, including the roofline model, the communication model, the Amdahl's model, a general combination of them (see Section~\ref{sec.model} for definitions), \new{and an extension on the communication model}.
+and analyzed, including the roofline model, the communication model, the Amdahl's model, a general combination of them (see Section~\ref{sec.model} for definitions), and an extension on the communication model.
 We provide a constant competitive ratio for each of these five models. 
 
 \LP{To fill : In previous papers, we needed an exact model on the speedup model. Here we don't need anything and match or surpass previous algorithms, in competitive ratio and in performance in practice}
@@ -244,19 +244,19 @@ t_j(p_j) = \frac{w_j}{p_j} + d_j \ .
 This model assumes that the task has a perfectly parallelizable fraction with work $w_j$ and an inherently sequential fraction with work $d_j$.
 
 
-\item \new{\emph{\textbf{Power Communication Model}}
+\item \emph{\textbf{Power Communication Model}}
 \begin{align}
 \label{eq.model.powcomm}
 t_j(p_j) = \frac{w_j}{p_j} + c_j (p_j)^{\gamma_j} \ .
 \end{align}
-Contrarily to the communication model where the communication cost grow linearly with the number of processor, we add an exponent $0 \leq \gamma_j \leq 1$ to address more possible scenarios. If $\gamma_j=0$ it corresponds to Amdahl's model whereas if $\gamma_j=1$, the communication cost grows linearly with $p_j$ as in the Communication Model.}
+Contrarily to the communication model where the communication cost grow linearly with the number of processor, we add an exponent $0 \leq \gamma_j \leq 1$ to address more possible scenarios. If $\gamma_j=0$ it corresponds to Amdahl's model whereas if $\gamma_j=1$, the communication cost grows linearly with $p_j$ as in the Communication Model.
 
 \item \emph{\textbf{General Model}}:
 \begin{align}
 \label{eq.exec_time}
 t_j(p_j) = \frac{w_j}{\min(p_j, \bar{p}_j)} + d_j + c_j (p_j - 1) \ ,
 \end{align}
-\new{This model is a generalization of the last three models.}
+This model is a generalization of the last three models.
 \end{itemize}
 
 From the execution time function of the task $j$, we can further define the \textbf{\emph{area}} of the task as a function
@@ -336,48 +336,47 @@ $T^{\opt} \ge \max \left(\frac{A^{\opt}}{P}, C^{\opt} \right)$.
 \section{Online Algorithm}
 \label{sec.alg}
 \LP{Updated from TOPC Paper}
-In this section, we present \new{\fair}, an online scheduling algorithm, and derive its competitive ratio for the general speedup model (Equation~(\ref{eq.exec_time})) and its three special cases. We also prove lower bounds on the competitiveness of our algorithm under these speedup models.
+<light>In this section, we present \fair, an online scheduling algorithm, and derive its competitive ratio for the general speedup model (Equation~(\ref{eq.exec_time})) and its three special cases.</light> We also prove lower bounds on the competitiveness of our algorithm under these speedup models.
 
 \subsection{Algorithm Description}
 
 {
 \begin{algorithm}[t]
     \footnotesize
-	\caption{Allocate\_Processor($j,\ratio$)}\label{alg.allocate1}
-    \KwIn{\neww{Task $j$ and Ratio $\ratio$ }}
-    \KwOut{\neww{Processor allocation $p'_j$ for the task}}
+    \caption{Allocate\_Processor($j,\ratio$)}\label{alg.allocate1}
+    \KwIn{Task $j$ and Ratio $\ratio$ }
+    \KwOut{Processor allocation $p'_j$ for the task}
     \tcp{Step 1: Initial Allocation}
     Compute $p_j^{\max}$ based on Equation (\ref{eq.pjmax})\;
     Compute $t_j^{\min} = t_j(p_j^{\max})$ and $a_j^{\min} = a_j(1)$\;
-    Find an allocation $p_j \in [1, p_j^{\max}]$ that \new{minimizes $\ratio_j \triangleq \max_p\left(\frac{t_j(p)}{t_j^{\min}}, \frac{a_j(p)}{a_j^{\min}}\right)$}\;
+    Find an allocation $p_j \in [1, p_j^{\max}]$ that minimizes $\ratio_j \triangleq \max_p\left(\frac{t_j(p)}{t_j^{\min}}, \frac{a_j(p)}{a_j^{\min}}\right)$\;
     \tcp{Step 2: Allocation Adjustment}
-    \lIf{$p_j > \lceil \new{\mu(R)} P \rceil$}
+    \lIf{$p_j > \lceil \mu(R) P \rceil$}
     {
-        $p'_j \leftarrow \lceil \new{\mu(R)} P \rceil$ \textbf{else} $p'_j \leftarrow p_j$
+        $p'_j \leftarrow \lceil \mu(R) P \rceil$ \textbf{else} $p'_j \leftarrow p_j$
     }
-   \new{\Return $\ratio_j$\;}
+   \Return $\ratio_j$\;
 \end{algorithm}
 }
 
-\new{We first introduce \fair's subroutine, Allocate\_Processor($j,\ratio$), that affects a number of processor to each task $j$ and is presented in Algorithm \ref{alg.allocate1}.}
+We first introduce \fair's subroutine, Allocate\_Processor($j,\ratio$), that affects a number of processor to each task $j$ and is presented in Algorithm \ref{alg.allocate1}.
 
-It consists of two steps. The first step performs an initial allocation for the task, which is inspired by the \textbf{\emph{local processor allocation}} strategy proposed in \cite{Benoit20_cluster, Benoit21_ieeetc}. Specifically, for each possible allocation $p\in [1, p_j^{\max}]$, we define $g_j(p) \triangleq a_j(p)/a_j^{\min}$ to be the ratio between the area of the task and its minimum area, and $f_j(p) \triangleq t_j(p)/t_j^{\min}$ to be the ratio between the execution time of the task and its minimum execution time. We then find an allocation $p$ that minimizes \new{$\max_p(f_j(p),g_j(p))$. We denote as $\ratio_j$ this resulting maximum.} Since $g_j(p)$ is non-decreasing with $p$ and $f_j(p)$ is non-increasing with $p$, the above optimization problem can be efficiently solved using binary search in $O(\log P)$ time.
+It consists of two steps. The first step performs an initial allocation for the task, which is inspired by the \textbf{\emph{local processor allocation}} strategy proposed in \cite{Benoit20_cluster, Benoit21_ieeetc}. Specifically, for each possible allocation $p\in [1, p_j^{\max}]$, we define $g_j(p) \triangleq a_j(p)/a_j^{\min}$ to be the ratio between the area of the task and its minimum area, and $f_j(p) \triangleq t_j(p)/t_j^{\min}$ to be the ratio between the execution time of the task and its minimum execution time. We then find an allocation $p$ that minimizes $\max_p(f_j(p),g_j(p))$. We denote as $\ratio_j$ this resulting maximum. Since $g_j(p)$ is non-decreasing with $p$ and $f_j(p)$ is non-increasing with $p$, the above optimization problem can be efficiently solved using binary search in $O(\log P)$ time.
 
-
-In the second step, the algorithm reduces the initial allocation to $\lceil \new{\mu(\ratio)} P \rceil$ if it is more than $\lceil \new{\mu(\ratio)} P \rceil$; otherwise the allocation will be unchanged. \new{It uses $\ratio$ which corresponds to the highest ratio we've seen so far among all the tasks that arrived in the system. More precisely, }
+In the second step, the algorithm reduces the initial allocation to $\lceil \mu(\ratio) P \rceil$ if it is more than $\lceil \mu(\ratio) P \rceil$; otherwise the allocation will be unchanged. It uses $\ratio$ which corresponds to the highest ratio we've seen so far among all the tasks that arrived in the system. More precisely, 
 
 \begin{align}\label{eq.muR}
-\new{\mu(\ratio)=\frac{2\ratio+1-\sqrt{4\ratio^2+1}}{2\ratio}}
+\mu(\ratio)=\frac{2\ratio+1-\sqrt{4\ratio^2+1}}{2\ratio}
 \end{align}  
 
 Let $p_j$ denote the initial allocation for the task and $p'_j$ the final allocation. Thus, after the second step, we have:
 \begin{align}\label{eq.adjust}
 p'_j = \begin{cases}
-\lceil \new{\mu(\ratio)} P \rceil,  & \text{~if~} {p}_j > \lceil\new{ \mu(\ratio)} P \rceil \\
+\lceil \mu(\ratio) P \rceil,  & \text{~if~} {p}_j > \lceil \mu(\ratio) P \rceil \\
 {p}_j, & \text{~otherwise~}
 \end{cases} \ .
 \end{align}
-This step adopts the technique first proposed in \cite{Lepere01_DAG} and subsequently used in \cite{Jansen06_DAG, Jansen05_concave}.{\color{brown} The purpose is to enable the execution of more tasks at any time, thus potentially increasing the overall resource utilization of the platform and reducing the makespan.} \new{Finally, Algorithm~\ref{alg.allocate1} returns the ratio $\ratio$ obtained in the first step. }
+This step adopts the technique first proposed in \cite{Lepere01_DAG} and subsequently used in \cite{Jansen06_DAG, Jansen05_concave}. {\color{brown} The purpose is to enable the execution of more tasks at any time, thus potentially increasing the overall resource utilization of the platform and reducing the makespan.} Finally, Algorithm~\ref{alg.allocate1} returns the ratio $\ratio$ obtained in the first step.
 \LP{I probably disagree or at least don't love the formulation, it's to avoid having some tasks ready and a poor processor utilization at the same time, which would not be efficient for the area nor the critical path and could be an issue in the worst case scenario}
 
 
