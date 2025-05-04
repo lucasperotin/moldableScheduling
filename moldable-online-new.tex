@@ -1,5 +1,7 @@
+
 \documentclass{article}
 \usepackage[margin=1.95cm]{geometry}
+
 
 \usepackage{enumitem}
 \setitemize{noitemsep,topsep=1pt,parsep=1pt,partopsep=1pt}
@@ -102,20 +104,27 @@
 \newenvironment{proofsketch}{%
   \renewcommand{\proofname}{Proof sketch}\proof}{\endproof}
   
+\title{Near-Optimal Universal Scheduling for Moldable Tasks: The \fair Algorithm}
+
+\author{
+  Lucas Perotin\thanks{Vanderbilt University, \texttt{lucas.perotin@vanderbilt.edu}} \\
+  Thomas Verrecchia \\
+  Padma Raghavan\footnotemark[1]
+}
+
+%\keywords{Online scheduling, Moldable tasks, Task graphs, Competitive analysis, Speedup models, Universal algorithm}
+
+
+
 \begin{document}
-
-\title{New results, Fair Heuristic}
-
+\maketitle
 \begin{abstract}
-The problem of scheduling moldable tasks on multiprocessor systems with the goal of minimizing the makespan has received significant attention, especially in contexts where tasks have dependence constraints (task graphs) or arrive dynamically (online scheduling). However, the combined setting—online scheduling of moldable task graphs—remains less explored.
+The problem of scheduling moldable tasks on multiprocessor systems with the goal of minimizing the makespan has received significant attention, especially in contexts where tasks have dependence constraints (task graphs) or arrive dynamically (online scheduling). However, the combined setting — online scheduling of moldable task graphs — remains less explored.
 
 Prior studies have addressed this problem by designing algorithms specifically tailored to particular speedup models, such as Amdahl, Communication, or Roofline. Although these specialized algorithms achieve constant competitive ratios under their respective models, their applicability is severely limited in practice: each requires tasks to strictly adhere to a predefined speedup model, making them impractical for general scenarios or hybrid environments.
 
-In this paper, we introduce a novel, universal online algorithm capable of handling arbitrary moldable tasks without assumptions about their speedup behavior. Remarkably, when applied to the specific speedup models previously studied, our algorithm achieves competitive ratios comparable to—or better than—those obtained by the specialized algorithms. Extensive experiments confirm that our universal approach consistently matches or outperforms existing model-specific algorithms, thus bridging the gap between theoretical guarantees and practical applicability.
+In this paper, we introduce a novel, universal online algorithm capable of handling arbitrary moldable tasks without assumptions about their speedup behavior. Remarkably, when applied to the specific speedup models previously studied, our algorithm achieves competitive ratios comparable to — or better than — those obtained by the specialized algorithms. Extensive experiments confirm that our universal approach consistently matches or outperforms existing model-specific algorithms, thus bridging the gap between theoretical guarantees and practical applicability.
 \end{abstract}
-
-
-\maketitle
 \section{Introduction}
 
 This paper addresses the problem of online scheduling of moldable task graphs onto a set of identical processors. Moldable tasks constitute an important and flexible class of parallel tasks where each task can run on an arbitrary number of processors, determined at the start of its execution, and the allocation remains fixed throughout. The execution time $t$ of a moldable task directly depends on the number of processors $p$ allocated to it, which is represented by a speedup function $t(p)$. This static yet flexible allocation strategy contrasts notably with rigid tasks, whose processor allocation is fixed and predefined, and malleable tasks, whose processor allocation can vary dynamically during execution~\cite{Feitelson96}.
@@ -144,7 +153,7 @@ In this paper, we propose a novel universal online algorithm, \fair, that effect
 \end{tabular}
 \end{table*}
 
-Our simplified general result is as follows. \textbf{If for each task in the instance, there exists a processor allocation such that both the execution time and the area (defined as the product of execution time and number of processors) are within a factor $\ratio$ of their respective minima, then the schedule produced by $\fair$ achieves a makespan within a factor $\frac{2\ratio}{2\ratio+1-\sqrt{4\ratio^2+1}}<2\ratio + 1$ of the optimal clairvoyant schedule}.
+Our simplified general result is as follows. \textbf{If for each task in the instance, there exists a processor allocation such that both the execution time and the area (defined as the product of execution time and number of processors) are within a factor $\ratio$ of their respective minima, then the schedule produced by $\fair$ achieves a makespan within a factor $\frac{2\ratio+1+\sqrt{4\ratio^2+1}}{2}<2\ratio + 1$ of the optimal clairvoyant schedule}.
  A similar competitive ratio of $2\ratio$ was achieved by \lpalist~\cite{Benoit20_cluster, Benoit21_ieeetc}, but in a much simpler setting consisting of independent tasks subject to failures, a scenario that can be interpreted as an online graph composed of chains of identical tasks. Our result, very similar, applies to the significantly more general and challenging setting of arbitrary moldable task graphs.
 
 
@@ -331,7 +340,7 @@ Let $\ratio = \max_j \ratio_j$ be the global maximum over all tasks. This value 
 
 \textbf{Our main results are:}
 \begin{itemize}
-    \item The online scheduling algorithm \fair\ is $\frac{2\ratio}{2\ratio+1-\sqrt{4\ratio^2+1}}< 2\ratio+1$-competitive: for any instance of moldable tasks with arbitrary speedup profiles, the resulting makespan is at most $(2\ratio+1)$ times the optimal clairvoyant schedule.
+    \item The online scheduling algorithm \fair\ is $\frac{2\ratio+1+\sqrt{4\ratio^2+1}}{2}< 2\ratio+1$-competitive: for any instance of moldable tasks with arbitrary speedup profiles, the resulting makespan is at most $(2\ratio+1)$ times the optimal clairvoyant schedule.
     \item Moreover, \fair\ is $(2\sqrt{P}+3)$-competitive.
     \item Every online algorithm is at least $\bigl(\tfrac{\sqrt{P}-1}{2}\bigr)$-competitive. Hence, \fair\ is near-optimal in the worst case.
 \end{itemize}
@@ -358,7 +367,7 @@ In this section, we introduce \fair, an online scheduling algorithm for which we
 \end{algorithm}
 }
 
-We begin by describing the subroutine \texttt{Compute\_Ratio}($j$), which assigns an initial processor allocation to each task $j$ and is detailed in Algorithm~\ref{alg.allocate1}. For each possible allocation $p \in [1, p_j^{\max}]$, \texttt{Compute\_Ratio}($j$) computes  $\ratio_j(p)$ and finds the processor allocation minimizing it, noted $p_j$, with a resulting ratio $\ratio_j$. Because this allocation minimises the maximum of the two normalized metrics, it ensures that both the execution time and the area of task $j$ are as close as possible of their respective optima. Since $g_j(p)$ is non-decreasing and $f_j(p)$ is non-increasing over $p$, this minimization can be efficiently solved using binary search in $O(\log P)$ time. The subroutine returns $p_j$ and $\ratio_j$.
+We begin by describing the subroutine \texttt{Compute\_Ratio}($j$), which assigns an initial processor allocation to each task $j$ and is detailed in Algorithm~\ref{alg.allocate1}. For each possible allocation $p \in [1, p_j^{\max}]$, \texttt{Compute\_Ratio}($j$) computes  $\ratio_j(p)$ and finds the processor allocation minimizing it, noted $p_j$, with a resulting ratio $\ratio_j$. Because this allocation minimizes the maximum of the two normalized metrics, it ensures that both the execution time and the area of task $j$ are as close as possible of their respective optima. Since $g_j(p)$ is non-decreasing and $f_j(p)$ is non-increasing over $p$, this minimization can be efficiently solved using binary search in $O(\log P)$ time. The subroutine returns $p_j$ and $\ratio_j$.
 
 
 {%\LinesNumberedHidden
@@ -1078,13 +1087,7 @@ spends on the portion of the critical path $f$ corresponding to the work done
 by \fair in that window. Together, they allow building bounds with the optimal time of the schedule.
 
 \medskip
-Splitting time into $\mathcal{I}_1^k$, $\mathcal{I}_2^k$, and
-$\mathcal{I}_3^k$ provides detailed information about \fair{}’s efficiency:
-\(\mathcal{I}_1^k\) and \(\mathcal{I}_2^k\) control how fast progress is made
-along the critical path, while $\mathcal{I}_2^k$ and \(\mathcal{I}_3^k\) capture how quickly area is
-consumed when the platform is highly loaded.  The following two lemmas convert
-those local observations into global bounds by relating
-$(T_1^k,T_2^k,T_3^k)$ to the optimal references $(A^{k,\opt},L_f^{k,\opt})\), each lemma correspond to one of the bounds.
+Splitting time into $\mathcal{I}_1^k$, $\mathcal{I}_2^k$, and $\mathcal{I}_3^k$ provides detailed insights into \fair ’s efficiency: \(\mathcal{I}_1^k\) and \(\mathcal{I}_2^k\) determine how quickly progress is made along the critical path, while $\mathcal{I}_2^k$ and \(\mathcal{I}_3^k\) reflect how efficiently area is consumed when the platform is highly loaded. Each of the small properties derived in the previous subsection is a formalization of one of these ideas, and they will now be combined to derive the competitive ratio. The following two lemmas convert these local properties into global bounds by relating $(T_1^k, T_2^k, T_3^k)$ to the optimal references $(A^{k,\opt}, L_f^{k,\opt})$. Each lemma corresponds to one of these bounds.
 
 
 
@@ -1171,7 +1174,7 @@ Based on the results of Lemmas \ref{lem.area} and \ref{lem.path}, we can now der
 \begin{theorem}\label{lem.makespan}
 Given $\rratio_m=\ratio$, the maximum ratio among all tasks in the instance, we have:
 \begin{equation}\label{eq.makespan}
-\frac{T}{T^{\opt}} \leq \frac{1}{\mu_m} = \frac{2\ratio+1+\sqrt{4\ratio^2+1}}{2\ratio}<2\ratio+1 \ .
+\frac{T}{T^{\opt}} \leq \frac{1}{\mu_m} = \frac{2\ratio+1+\sqrt{4\ratio^2+1}}{2}<2\ratio+1 \ .
 \end{equation}
 Therefore, \fair is $(2\ratio+1)$-competitive.
 \end{theorem}
@@ -1241,9 +1244,14 @@ Using properties (P5) and (A5) from Table~\ref{tab.prop}:
 \]
 we conclude using (G1), and $\mu_m=\mu(\ratio)$ :
 \[
-T \leq \left( \ratio + \frac{\ratio}{1 - \mu_m} \right) T^{\opt} = \frac{T^{\opt}}{\mu_m}= \frac{2\ratio+1+\sqrt{4\ratio^2+1}}{2} T^{\opt}.
+\begin{aligned}
+T 
+&\le \Bigl(\ratio + \frac{\ratio}{1-\mu_m}\Bigr) T^{\opt}  = \frac{T^{\opt}}{\mu_m}= \frac{2\ratio}{\,2\ratio + 1 - \sqrt{4\ratio^{2}+1}\,}\,T^{\opt}= \frac{2\ratio\bigl(2\ratio + 1 + \sqrt{4\ratio^{2}+1}\bigr)}
+        {(2\ratio + 1)^{2}-\bigl(\sqrt{4\ratio^{2}+1}\bigr)^{2}}\,T^{\opt}\\[4pt]
+&= \frac{2\ratio\bigl(2\ratio + 1 + \sqrt{4\ratio^{2}+1}\bigr)}
+        {4\ratio}\,T^{\opt} = \frac{2\ratio + 1 + \sqrt{4\ratio^{2}+1}}{2}\,T^{\opt}.
+\end{aligned}
 \]
-
 Finally, note that $\frac{2\ratio+1+\sqrt{4\ratio^2+1}}{2\ratio}<2\ratio+1$ is immediate, because $4\ratio^2+1<(2\ratio+1)^2$
 \end{proof}
 
@@ -1459,25 +1467,29 @@ Combining this with the earlier lower bound \( T \ge P - \sqrt{P} \), we obtain:
 
 \end{proof}
 
-
+\medskip
+With these general upper and lower bounds now in place, the remaining task is to determine how large the parameter~$\ratio$ can be under the classical speedup models of interest.  The next section instantiates this parameter for those models and, by plugging the resulting values into Theorem~\ref{lem.makespan}, derives closed‑form competitive ratios for \fair.
 
 \section{Special Cases for Different Speedup Models}
 \label{sec.anamodel}
+This section tailors the general framework of Section~\ref{sec.analysis} to the concrete speedup models most frequently studied in the literature.  In the first subsection we instantiate the parameter~$\ratio$ for each model and, by plugging the resulting values into Theorem~\ref{lem.makespan}, obtain explicit competitive ratios for \fair.  The second subsection then argues that these bounds are essentially tight:  any substantial improvement seems out of reach, suggesting that our algorithm and analysis is near‑optimal.
+
 
 \subsection{Deriving Competitive Ratios}
 
-To derive a competitive ratio for a given speedup model, the idea is conceptually straightforward—considerably simpler than the constructions in \cite{ICPP22, TOPC24}.  
-For each model~$M$, we determine the smallest constant $\ratio_M$ such that, for any task following the model, there exists a processor allocation $p$ satisfying
+To derive a competitive ratio for a given speedup model, the idea is conceptually straightforward.  
+For each model~$M$, we determine the smallest constant~$\ratio_M$ such that, for any task following the model, there exists a processor allocation~$p$ satisfying
 \[
 \frac{t_j(p)}{t_j^{\min}} \le \ratio_M
 \quad \text{and} \quad
-\frac{a_j(p)}{a_j^{\min}} \le \ratio_M \,.
+\frac{a_j(p)}{a_j^{\min}} \le \ratio_M .
 \]
-We then substitute this value into the general bound from Lemma~\ref{lem.makespan}.  
-Although the objective function differs from that of~\cite{TOPC24}, the approach is similar, and several previously derived results can be reused.
+Substituting $\ratio_M$ into Theorem~\ref{lem.makespan} immediately yields a competitive bound of $\frac{2\ratio_M + 1 + \sqrt{4\ratio_M^2 + 1}}{2}$ for \fair.  
+Although our objective function differs from that of~\cite{TOPC24}, the overall approach is similar and allows several previously derived results to be reused.
+
 
 \begin{lemma}\label{lem.roofline}
-For any task that follows the Roofline speedup model, there exists a processor allocation that achieves a ratio of at most $\ratio_{\ROO} = 1$.  
+For any task that follows the Roofline speedup model, there exists a processor allocation that achieves a ratio no greater than $\ratio_{\ROO} = 1$.  
 Therefore, \fair is $\frac{3 + \sqrt{5}}{2} <2.62$-competitive when all tasks follow the Roofline model.
 \end{lemma}
 
@@ -1485,9 +1497,10 @@ Therefore, \fair is $\frac{3 + \sqrt{5}}{2} <2.62$-competitive when all tasks fo
 This result is standard and follows easily.  
 If a task~$j$ follows the Roofline model, its execution time is given by $t(p) = \frac{w}{\min(p, \bar{p})}$, where $w > 0$ and $\bar{p} \in \{1, \dots, P\}$.  
 Setting the processor allocation to $p = \bar{p}$ yields the minimum execution time $t_j^{\min} = \frac{w}{\bar{p}}$.  
-The corresponding area is $a_j(p) = p \cdot t(p) = w$ for all $p \le \bar{p}$, so the minimum area is $a_j^{\min} = w$.  
+The corresponding area is $a_j(p) = p \cdot t(p) = w$ for all $p \le \bar{p}$, so the minimum area is achieved with $a_j^{\min} = w$.  
 Hence, $\ratio_j(p) = 1$, and we conclude that $\ratio_{\ROO} = 1$.  
-Plugging this into Equation~\eqref{eq.makespan} yields the claimed competitive ratio.
+Plugging this into Equation~\eqref{eq.makespan}, $T \leq \frac{2\ratio+1+
+\sqrt{4\ratio^2+1}}{2} T^{\opt}$. yields the claimed competitive ratio.
 \end{proof}
 
 \begin{remark}
@@ -1495,8 +1508,8 @@ The derived competitive ratio is tight in this setting; the proof is omitted for
 \end{remark}
 
 \begin{lemma}\label{lem.comm}
-For any task that follows the communication model, there exists a processor allocation that achieves a ratio of at most  $\ratio_{\COM} = \sqrt{2}$.  
-Therefore, \fair is $2 + \sqrt{2} < 3.42$-competitive when all tasks follow the communication model.
+For any task that follows the communication model, there exists a processor allocation that achieves a ratio no greater than  $\ratio_{\COM} = \sqrt{2}$.  
+Therefore, \fair is $(2 + \sqrt{2}) < 3.42$-competitive when all tasks follow the communication model.
 \end{lemma}
 
 \begin{proof}
@@ -1508,8 +1521,9 @@ t(p) = \frac{w}{p} + c(p - 1) = c\left( \frac{w'}{p} + p - 1 \right),
 with $w' > 0$ and $c > 0$.  
 This function is decreasing on $[1, \sqrt{w'}]$ and increasing on $[\sqrt{w'}, \infty)$.
 
+\paragraph{We first assume $P>w'$.}
 Let $p^{\max}$ denote the number of processors that minimizes the task’s execution time, i.e., $t(p^{\max}) = t^{\min}$.  
-Clearly, either $p^{\max} = P$ or $\lfloor \sqrt{w'} \rfloor \le p^{\max} \le \lceil \sqrt{w'} \rceil$.  
+Clearly, $\lfloor \sqrt{w'} \rfloor \le p^{\max} \le \lceil \sqrt{w'} \rceil$.  
 Also, the minimum area is obtained with one processor: $a^{\min} = a(1) = c w'$.
 
 Define \(f(w', p) = \frac{t(p)}{t^{\min}} = \frac{\frac{w'}{p} + p - 1}{\frac{w'}{p^{\max}} + p^{\max} - 1}\).  
@@ -1529,7 +1543,7 @@ We show that \(f(w', p)\) is non-decreasing with respect to \(w'\) in the interv
   \left( \frac{w'}{p^{\max}} + p^{\max} - 1 \right)^2
 }.
 \end{align*}
-This is non-negative when \(p \le p^{\max}\), which is true for \(w' \ge p^2\). The continuity of $f$ is straightforward, hence it is non decreasing. We now consider four cases:
+This is non-negative when \(p \le p^{\max}\), which is true for \(w' \ge p^2\). The continuity of $f$ is straightforward, hence it is non-decreasing. We now consider four cases:
 
 \textbf{Case 1:} \(w' \le 2 + 2\sqrt{2}\), set \(p = 1\).
 
@@ -1578,7 +1592,7 @@ Indeed, for \(w' = 49\), \(p^{\max}=7\).
 
 
 \textbf{Case 4:} \(w' > 49\).  
-We use the lower bound \(t^{\min} \ge c(2\sqrt{w'} - 1)\) (attained by non-integer allocation), and set:
+We use the lower bound \(t^{\min} \ge c(2\sqrt{w'} - 1)\) (attained by a non-integer allocation), and set:
 \(
 p = \left\lfloor \sqrt{\frac{w'}{3}} + \frac{1}{2} \right\rfloor.
 \)
@@ -1593,10 +1607,17 @@ This function is decreasing in \(w'\), and using \(w' > 49\), we get:
 \frac{t(p)}{t^{\min}} \le \frac{1}{2 - \frac{1}{7}} \left( \frac{1}{\frac{1}{\sqrt{3}} - \frac{1}{14}} + \frac{1}{\sqrt{3}} \right) \approx 1.38 < \sqrt{2}.
 \]
 
+
+\paragraph{If \( P \leq \sqrt{w'} \).}
+
+In this case, either the previously chosen value of \( p \) exceeds \( P \), in which case we set \( p = P \) instead. As shown in the earlier analysis, this allocation minimizes the execution time, and the area decreases compared to our earlier derivation—so both bounds still hold. Otherwise, we retain the same value of \( p \) as before, which keeps both time and area unchanged. However, the minimum execution time is now larger than in the case \( P > \sqrt{w'} \), so our bound on \( \frac{t(p)}{t_{\min}} \) remains valid.
+
+
 In all cases, we conclude that $\ratio_{\COM} = \sqrt{2}$, and substituting this into Equation~\ref{eq.makespan} gives:
 \[
 \frac{T}{T^{\opt}} = \frac{2\ratio_{\COM} + 1 + \sqrt{4\ratio_{\COM}^2 + 1}}{2} = \frac{2\sqrt{2} + 1 + \sqrt{9}}{2} = 2 + \sqrt{2}.
 \]
+
 \end{proof}
 
 \begin{remark}
@@ -1604,11 +1625,11 @@ The derived competitive ratio is tight in this setting; the proof is omitted for
 \end{remark}
 
 \begin{lemma}\label{lem.amdahl}
-For any task that follows the Amdahl speedup model, there exists a processor allocation that achieves a ratio of at most $\ratio_{\AMD}=2$. Therefore, \fair\ is $\frac{5+\sqrt{17}}{2} < 4.562$-competitive when all tasks follow the Amdahl model.
+For any task that follows the Amdahl speedup model, there exists a processor allocation that achieves Power a ratio no greater $\ratio_{\AMD}=2$. Therefore, \fair\ is $\frac{5+\sqrt{17}}{2} < 4.562$-competitive when all tasks follow the Amdahl model.
 \end{lemma}
 
 \begin{proof}
-This result is well known and straightforward. If a task follows the Amdahl model, its execution time can be written $t(p)=\frac{w}{p}+d$, with $w>0$ and $d>0$. The minimum execution time satisfies $t^{\min}>d$, and the minimum area is obtained with just one processor, i.e., $a^{\min}=a(1)=w+d$.
+This result is well known and straightforward. If a task follows the Amdahl model, its execution time can be written $t(p)=\frac{w}{p}+d$, with $w>0$ and $d>0$. The minimum execution time satisfies $t^{\min}>d$, and the minimum area is obtained using a single processor, i.e., $a^{\min}=a(1)=w+d$.
 
 We set $p=\min\!\bigl(\left\lceil \frac{w}{d} \right\rceil,\,P\bigr)$. Since $p\le\left\lceil \frac{w}{d} \right\rceil$, we have
 \[
@@ -1625,7 +1646,7 @@ If $p=\left\lceil \tfrac{w}{d} \right\rceil$ (and thus $p\le P$), then
 \]
 Otherwise $p=P$, so $t(p)=t^{\min}$ and consequently $\tfrac{t(p)}{t^{\min}}=1<2$.
 
-Hence this gives $\ratio_{\AMD}=2$, and substituting this value into Equation~\ref{eq.makespan} yields the desired competitive ratio.
+Hence, this gives $\ratio_{\AMD}=2$, and substituting this value into Equation~\ref{eq.makespan} yields the desired competitive ratio.
 \end{proof}
 
 \begin{remark}
@@ -1633,7 +1654,7 @@ The derived competitive ratio is tight in this setting; the proof is omitted for
 \end{remark}
 
 \begin{lemma}\label{lem.general}
-For any task that follows the General speedup model, there exists a processor allocation that achieves a ratio of at most $R^{\GEN}<2.018$. Therefore, \fair\ is $4.6$-competitive when all tasks follow the General model.
+For any task that follows the General speedup model, there exists a processor allocation that achieves Power a ratio no greater $R^{\GEN}<2.018$. Therefore, \fair\ is $4.6$-competitive when all tasks follow the General model.
 \end{lemma}
 
 \begin{proof}
@@ -1646,7 +1667,7 @@ We distinguish two cases:
 \textbf{Case 1:} $w' \le 800$.  
       Appendix~\ref{ap.general} shows that there exists a $p\in[1,8]$ such that
       $t(p)/t_{\min}\le 2.003$ and $a(p)/a_{\min}\le 2$.
-      The proof proceeds by an exhaustive sub-case analysis; for example,
+      The proof proceeds by an exhaustive subcase analysis; for example,
       if $w' \in [185,485]$ and $d' \in [80,170]$, the choice $p=3$ is valid.
       The detailed enumeration (13 subcases) is omitted here.
 
@@ -1671,30 +1692,30 @@ to that of Amdahl and thus tight in this setting.
 \end{remark}
 
 \begin{lemma}\label{lem.pcom}
-For any task that follows the Power Communication model, there exists a processor allocation that achieves a ratio of at most $R^{\PCOM}<2.00424$. Therefore, \fair\ is $4.57$-competitive when all tasks follow the Power Communication model.
+For any task that follows the Power Communication model, there exists a processor allocation that achieves Power a ratio no greater $R^{\PCOM}<2.00424$. Therefore, \fair\ is $4.57$-competitive when all tasks follow the Power Communication model.
 \end{lemma}
-
 \begin{proof}
 If a task follows the Power Communication model, its execution time can be written
 $t(p) = \frac{w}{p} + c p^\gamma
        = c \left( \frac{w'}{p} + p^\gamma \right)$,
-with $w'>0$ and $0<\gamma' \le 1$. Allowing $p$ to take non-integer values, a quick analysis shows that
-the function $t(p)$ is minimised at
+with $w'>0$ and $0<\gamma \le 1$. Allowing $p$ to take non-integer values, a quick analysis shows that
+the function $t(p)$ is minimized at
 $p^{\star} = \left( \frac{w'}{\gamma} \right)^{\frac{1}{\gamma+1}}$; with
- $t_{min} \geq \left( \gamma+1\right)\left( \frac{w'}{\gamma} \right)^{\frac{\gamma}{\gamma+1}}$
+ $t_{\min} \geq c\left( \gamma+1\right)\left( \frac{w'}{\gamma} \right)^{\frac{\gamma}{\gamma+1}}$
 
+\paragraph{We first assume $P>p^*$.}
 We distinguish two cases:
 
 \textbf{Case 1:} $w' \le 8$.  
 Appendix~\ref{ap.powcom} shows that there exists a $p\in[1,8]$ such that
 $t(p)/t_{\min}\le 2$ and $a(p)/a_{\min}\le 2$.
-The proof proceeds by an exhaustive sub-case analysis; for example,
+The proof proceeds by an exhaustive subcase analysis; for example,
 if $w' \in [3,4]$ and $\gamma\le 0.1$, choosing $p=4$ is valid.
-The detailed enumeration (12 sub-cases) is omitted here.
+The detailed enumeration (12 subcases) is omitted here.
 
 
 \textbf{Case 2:} $w' \ge 8$ and $0\le\gamma\le 0.1$  
-We set \(p=\left\lceil w'^{\frac{1}{\gamma+1}}\right\rceil\).  
+We set \(p=\left\lceil w'^{\frac{1}{\gamma+1}}\right\rceil \leq p^* <P\).  
 Then  
 \begin{align*}
 \frac{t(p)}{t^{\min}} &= \frac{\frac{w'}{p}+p^\gamma}{t^{\min}} \le \frac{\frac{w'}{\,w'^{\frac{1}{\gamma+1}}} + \bigl(w'^{\frac{1}{\gamma+1}}+1\bigr)^\gamma}
@@ -1767,7 +1788,7 @@ Thus, for all \(w'\ge 8\) and \(0\le\gamma\le0.1\),
 \]
 
 \textbf{Case 3:}  $w' \ge 8$ and $\gamma > 0.1$.  
-We set \(p=\bigl\lfloor w'^{\frac{1}{\gamma+1}}\bigr\rfloor\).
+We set \(p=\bigl\lfloor w'^{\frac{1}{\gamma+1}}\bigr\rfloor \leq p^* <P \).
 
 \begin{align*}
 \frac{t(p)}{t^{\min}} = \frac{\tfrac{w'}{p}+p^\gamma}{t^{\min}} \le \frac{\displaystyle
@@ -1809,6 +1830,10 @@ Finally,
    \le \frac{2w'}{w'+1} < 2 .
 \end{align*}
 
+\paragraph{If \( P \leq p^* \).}
+
+In this case, either the previously chosen value of \( p \) exceeds \( P \), in which case we set \( p = P \) instead. As shown in the earlier analysis, this allocation minimizes the execution time, and the area decreases compared to our earlier derivation—so both bounds still hold. Otherwise, we retain the same value of \( p \) as before, which keeps both time and area unchanged. However, the minimum execution time is now larger than in the case \( P > p^* \), so our bound on \( \frac{t(p)}{t_{\min}} \) remains valid.
+
 \smallskip
 \noindent
 In all cases, \(R^{\PCOM}<2.00424\) yields a competitive ratio strictly below \(4.57\) when substituting in Equation~\ref{eq.makespan}.
@@ -1821,8 +1846,7 @@ $R_{\PCOM}=2$, in which case the derived competitive ratio would match that
 of Amdahl and be tight in this setting.
 \end{remark}
 
-
-We have derived competitive ratios for all considered speedup models, which are very close from the previous ones obtained with algorithms specific to the models, while ours is general. In the next subsection, we will discuss why those results are unlikely to be beatable, except with new groundbreaking techniques.
+We have derived competitive ratios for all considered speedup models, which are very close to those previously obtained by algorithms tailored to each model, even though our algorithm is general. In the next subsection, we explain why these results are unlikely to be improved upon, unless through fundamentally new techniques.
 
 \subsection{Potential for Improvements}
 
@@ -1838,35 +1862,33 @@ We say that an algorithm belongs to \emph{Local-Allocation List Scheduling} (\te
           The processor allocation chosen for a task depends only on that task’s speedup profile~$t(p)$.  Consequently, two identical tasks receive identical allocations, independent of the current system state or of other tasks in the queue.
 \end{enumerate}
 
-In the on-line setting our knowledge is inherently limited to the task that has
-just been released; no information about yet-to-be-revealed successors is
-available.
-Consequently, papers such as \cite{ICPP22,TOPC24}  chose the
-allocation of each task solely from that task’s speedup curve, exactly as
+In the online setting, our knowledge is inherently limited to the task that has
+just been released; no information about successors that have yet to be revealed is available.
+Consequently, previous work such as \cite{ICPP22,TOPC24} determine the
+allocation of each task solely from that task’s speedup function, exactly as
 required by condition~(ii).
 Once allocations are fixed, a greedy (ASAP) list scheduler seems to be the only
 reasonable option, because any deliberate idling can be exploited by an
-adversary to extend the makespan. It is the reason why condition~(i) was introduced.
+adversary to extend the makespan. This is why condition~(i) was introduced.
 
+To further explain the validity of these assumptions, let's study the best algorithms when the entire DAG is known. They all follow
+\emph{two‑phase approach}:
+\begin{itemize}
+\item (1) analyze the full graph to assign a processor allocation to every task;
+\item (2) run a greedy list schedule on those fixed allocations~\cite{Wang92_DAG,Chen13_concave, Lepere01_DAG, Jansen06_DAG}.
+\end{itemize}
+While allocations in Phase (1) can rely on global DAG properties in the offline setting, such information is unavailable online. Crucially, even though offline algorithms assign allocations differently depending on global DAG structure—accelerating critical-path tasks and possibly slowing tasks without successors—they never adapt allocations based on instantaneous system load during the scheduling phase. Since online algorithms lack knowledge of the DAG structure, condition (ii) naturally emerges: tasks with identical speedup profiles must receive identical allocations, because there is no reliable structural information to justify differentiating them. The only way left to treat tasks differently would be to look at the system state at each moment. But even the best offline algorithms, despite knowing the whole DAG in advance, avoid this kind of state‑based tweaking, because it would make the policy much more complicated and too hard to analyze. This motivates the strong assumption in the \textsc{LALIST} paradigm, where task allocations depend only on their individual time functions.
 
+Intuitively, allowing the allocation to react to the instantaneous load may appear advantageous (e.g., “use all processors if only one task is ready”). Yet these locally sound decisions can backfire under adversarial conditions, for instance, when a large number of tasks arrive just after allocating too many processors to a single task.
+Even in the offline setting, this possibility is hard to anticipate. For these reasons, only genuinely new breakthrough ideas (offline or online) could lead to an algorithm that outperforms all \textsc{LALIST} heuristics, and we think such a breakthrough is very unlikely.
 
-When the entire DAG is known, all off-line algorithms follow a
-\emph{two-phase approach}:
-(1) analyse the full graph to assign a processor allocation to every task;
-(2) run a greedy list schedule on those fixed allocations.\cite{Wang92_DAG,Chen13_concave, Lepere01_DAG, Jansen06_DAG}
-While the allocations in Phase~(1) depend on global DAG properties for offline setting,
-such data is not available online, hence the strongest condition of algorithm following the \textsc{LALIST} paradigm, where we assume tasks allocation only depend on their time function.
-
-Intuitively, allowing the allocation to react to the instantaneous load might seem advantageous (e.g.\ ``use all processors if only one task is ready'').  Yet such state-dependent schemes can later regret that choice when a burst of new tasks arrives.  
-Even in the off-line setting, where the entire DAG is known in advance, no state-adaptive allocation policy with a provably better ratio is known; in the on-line world the challenge is even harder.
-For these reasons, only some new breakthrough ideas would lead to an algorithm that beats all heuristics belonging to \textsc{LALIST}, and we think such result is very unlikely to happen.
 
 
 \renewcommand{\arraystretch}{1.7}
 \begin{table*}[h]
 \centering
-\caption{Summary of parameters and competitive ratios for different speedup models (rounded down for the best possible bound, rounded up for our heuristics). In red are shown the tight bounds. }
-\label{tab.all-values}
+\caption{Summary of parameters and competitive ratios for different speedup models. The best possible bounds are rounded down; bounds from our heuristics are rounded up. Tight bounds are shown in red. }
+\label{tab.all-valuesmain}
 \begin{tabular}{| c | c | c | c | c |}
 \hline
 \textbf{Model $M$} & \cite{ICPP22} & \cite{TOPC24} & \fair & Lower Bound on Best \textsc{LALIST} Heuristic \\
@@ -1879,7 +1901,7 @@ Amdahl (\AMD) & $4.74$ & {\color{red} $4.55$} & $4.56$ & $\frac{2}{1-\sqrt{8\sqr
 \hline
 General (\GEN) & $5.72$ & $4.63 (4.58)^*$ & $4.6$ & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} > 4.54$ \\
 \hline
-Extended COM (COM2) &  & $4.57^*$  & $4.57$ & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} > 4.54$  \\
+Extended COM (COM2) &  &   & $4.57$ & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} > 4.54$  \\
 \hline
 \end{tabular}
 \end{table*}
@@ -1888,42 +1910,36 @@ Extended COM (COM2) &  & $4.57^*$  & $4.57$ & $\frac{2}{1-\sqrt{8\sqrt{2}-11}} >
 
 \paragraph{Known limits of \textsc{LALIST}.}
 In~\cite{TOPC24} the authors established tight lower bounds on the competitive ratio of any \textsc{LALIST} algorithm.  
-For the Roofline, communication, and Amdahl models those bounds are met by algorithms specific model; as shown in Table~\ref{tab.all-values} \footnote{For the General Model, the Algorithm presented in \cite{TOPC24} actually achieves better bound than \fair, using the refined analysis, it can be shown to be $4.58$-competitive  Similarly, for Power Communication Model, we can easily derive a ratio of $4.57$} .  
+For the Roofline, communication, and Amdahl models, those bounds are met by model-specific algorithms; as shown in Table~\ref{tab.all-valuesmain} \footnote{For the General model, the algorithm presented in \cite{TOPC24} actually achieves a better bound than \fair. Using the refined analysis, it can be shown to be $4.58$-competitive. } .  
 No \textsc{LALIST} strategy—regardless of its priority rule—can do better.
 
 
 
 \paragraph{Where \fair\ stands.}
 Strictly speaking, \fair\ is not in \textsc{LALIST}, because each allocation also depends on the global ratio~$\rratio$ observed so far.  
-However, a clairvoyant variant that is told in advance the model-dependent constant $\ratio^M$ could initialise $\rratio$ directly to~$\ratio^M$ instead of $1$ (the online to update is Line 2 in Algorithm~\ref{alg.online}).  
-The analysis would then proceed unchanged, there would be no subsequent updates of $\rratio$ (and hence of~$\mu$), and the algorithm would belong to \textsc{LALIST}—achieving exactly the bounds of \fair shown in Table~\ref{tab.all-values}.
+However, a more clairvoyant variant, given the model-dependent constant~$\ratio^M$ in advance, could directly initialize $\rratio$ to~$\ratio^M$ instead of~$1$. Such algorithm would be identical to \fair\ except for Line 2 of Algorithm~\ref{alg.online}, where the initial ratio is set.
+The analysis would then proceed unchanged with $k=1$ since no further updates of $\rratio$ (and hence of~$\mu$) would occur. This algorithm would belong to \textsc{LALIST}, achieving exactly the bounds of \fair shown in Table~\ref{tab.all-valuesmain}.
 
-Thus the deviations of \fair\ from \textsc{LALIST} are not due to on-line state adaptation, but merely to learning each task’s speedup model on the fly.  
-That \fair\ still comes within \(\le 1\%\) of the best possible ratios of a clairvoyant \textsc{LALIST} algorithm underscores how little room for improvement remains.
+Thus the deviations of \fair\ from \textsc{LALIST} are not due to online state adaptation, but merely to learning each task’s speedup model on the fly.  
+That \fair\ still achieves a competitive ratio within 1\% of the best \textsc{LALIST} algorithms — including those that know the speedup model perfectly from the start, such as those in~\cite{ICPP22, TOPC24} — shows how little room for improvement remains.
+
+In summary, \fair\ almost matches the best algorithm that follows the \textsc{LALIST} paradigm. Even if a clairvoyant initialization of the ratio were possible, it would not yield a better bound: the non‑clairvoyant version of \fair\ already achieves a ratio very close to the best attainable by any \textsc{LALIST} algorithm, including those that know all task profiles in advance (such as the algorithms in~\cite{ICPP22,TOPC24}). To improve the ratios further, one would need techniques that violate at least one of the defining \textsc{LALIST} conditions. Yet, even with full knowledge of the DAG, no better strategy than the classic two-phase “allocate everything then list-schedule” approach is known. Hence, discovering an online algorithm that outperforms all \textsc{LALIST} strategies still seems far out of reach.\\
 
 
-In summary, \fair almost matches the best algorithm that follows \textsc{LALIST} paradigm, even comparing to clairvoyant heuristics. To further improve the ratios, one would need techniques that break at least one of the condition  which would require some breakthrough ideas, for scheduling and for analysing.
-
-%------------------------------------------------------------------
-% Transition from theory to experiments
-%------------------------------------------------------------------
-\noindent
-\textbf{From theory to practice.}
-The preceding sections demonstrated that \fair\ is, in theory, within roughly
-one percent of the best clairvoyant \textsc{LALIST} algorithms for every
-speedup model we studied.
-We now turn to an empirical validation: Section~\ref{sec.experiments} explains
+After deriving and discussing all these theoretical guarantees, we now turn to an empirical validation. Section~\ref{sec.experiments} explains
 how we generate workloads, which heuristics we test, and how we measure
 performance.
+
+
 
 %------------------------------------------------------------------
 \section{Experiments}
 \label{sec.experiments}
 %------------------------------------------------------------------
 
-We first describe the workloads (§\ref{sec:instance-gen}), then the
+In this section, we first describe the workloads (§\ref{sec:instance-gen}), then the
 heuristics (§\ref{sec:heuristics}), and finally the experimental
-protocol (§\ref{sec:exp-protocol}).
+protocol (§\ref{sec:exp-protocol}), before discussing the outcome of the experiments (§\ref{sec.expresults}).
 
 %------------------------------------------------------------------
 \subsection{Instance Generation}
@@ -1932,7 +1948,7 @@ protocol (§\ref{sec:exp-protocol}).
 \paragraph{Task generation.}
 Our study evaluates the scheduling heuristics on the five speedup models
 defined in Section~\ref{sec.model}:
-Roofline, communication, Amdahl, power-communication, and general.
+Roofline, Communication, Amdahl, Power Communication, and General.
 For every instance each task is generated independently as follows:
 
 \begin{itemize}
@@ -1993,19 +2009,19 @@ The following topology parameters control the structure of each graph:
 
 For every speedup model we compare five allocation policies:
 \begin{itemize}
-    \item \textbf{ICPP22} — heuristic presented in
-          \cite{ICPP22} (labelled \emph{ICPP22} in all tables).
-    \item \textbf{TOPC24} — heuristic presented in
-          \cite{TOPC24} (labelled \emph{TOPC24}).
-          \footnote{For the power-communication model we extend the
+    \item \textbf{ICPP22} — heuristics presented in
+          \cite{ICPP22} (labelled \emph{ICPP22} in all tables). Again, the heuristic is specific to the model tested.
+    \item \textbf{TOPC24} — heuristics presented in
+          \cite{TOPC24} (labelled \emph{TOPC24}), also specific to the model tested.
+          \footnote{For the Power Communication model we extend the
           allocation rules of both \cite{ICPP22} and \cite{TOPC24} using the
           analysis of Section~\ref{sec.anamodel}; the resulting variants follow
-          the spirit of the original papers while remaining model-consistent.}
+          the spirit of the original papers.}
     \item \textbf{Fair} — our single, model-agnostic heuristic.
     \item \textbf{minTime} — allocate \(p_j=p_j^{\max}\), minimising each
-          task’s execution time.
+          task’s execution time, and schedule tasks ASAP.
     \item \textbf{minArea} — allocate \(p_j=1\), minimising each
-          task’s processor-time area.
+          task’s processor-time area, and schedule tasks ASAP.
 \end{itemize}
 
 These policies differ only in their processor-allocation rule.
@@ -2014,11 +2030,10 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
 
 \begin{itemize}
     \item \textbf{FIFO} (default) — first in, first out.
-    \item \textbf{procs} — task requiring the largest allocation first.
+    \item \textbf{procs} — task requiring the largest allocation first \footnote{For $\fair$, we very slightly modify the Algorithm~\ref{alg.online} by precomputing the $p'$, line 11, before the loop to ensure the queue is correctly ordered}.
     \item \textbf{area} — task with the largest area
           \(a(p)=t(p)\times p\) first.
-    \item \textbf{length} — task with the largest execution time \(t(p)\) first
-          (descending order).
+    \item \textbf{length} — task with the largest execution time \(t(p)\) first.
 \end{itemize}
 
 %------------------------------------------------------------------
@@ -2047,8 +2062,6 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
     \label{tab:exp-params}
 \end{table}
 
-For each speedup model and each parameter, we designed one experiment that
-studies the impact of that parameter on heuristic quality.
 All default settings and test ranges are summarised in
 Table~\ref{tab:exp-params}.
 For every speedup model and every parameter summarized in the table, we perform one experiment that isolates the impact
@@ -2083,17 +2096,15 @@ C^{\min} \;=\;
   \item \(A^{\min}\) is the total area if every task runs on a single
         processor, which is the minimum possible area for the instance.
   \item \(C^{\min}\) is the length of the longest path when each task is
-        executed with its allocation \(p_j^{\max}\) that minimises
+        executed with its allocation \(p_j^{\max}\) that minimizes
         \(t_j(\,\cdot\,)\).
 \end{itemize}
 Both quantities are readily computable in \(O(|E|+|V|)\) time and clearly
 satisfy \(A^{\min}\!\le A^{\opt}\) and \(C^{\min}\!\le C^{\opt}\), hence
 \(L\le T^{\opt}\).  While \(L\) is less tight than the theoretical bound \footnote{%
-  Polynomial‐time lower bounds tighter than the one we adopt do exist
-  \cite{Lepere}, but evaluating them would largely dominate the runtime of the experiment.}, it
-is sufficient for comparing heuristics and can be evaluated orders of
-magnitude faster than solving—exactly or approximately—the optimal allocation
-problem for every instance.
+  Lower bounds tighter than the one we adopt and computable in polynomial time also exist
+  \cite{Lepere01_DAG}, but evaluating them would largely dominate the runtime of the experiment.}, it
+is sufficient for comparing heuristics.
 
 The experimental protocol is as follows:
 
@@ -2102,13 +2113,12 @@ The experimental protocol is as follows:
           which is swept over all of its \textbf{Test Values}.
     \item For each setting, generate 50 random instances and simulate them with
           all heuristics.  
-          The performance metric is the ratio \(\tfrac{T}{L}\), where \(L\) is
-          a lower bound on the optimal makespan.
+          The performance metric is the ratio \(\tfrac{T}{L}\), where \(L\) is the lower bound on the optimal makespan previously defined.
     \item Convert the 50 ratio values per heuristic into a box-plot.
           The box spans the 25th–75th percentiles; the horizontal black line
           marks the median; a star denotes the average.
           Whiskers extend to the 10th and 90th percentiles, and outliers
-          beyond that range are shown as small circles.
+          beyond that range are shown as small circles. However, all the detailed results of the experiments for each pair, using these box-plots, is not reported in the main part of the paper.
     \item Produce two summary tables:  
           (i) the average ratio for each (heuristic, speedup model)
           pair plus the overall mean;  
@@ -2116,13 +2126,11 @@ The experimental protocol is as follows:
           Although, in principle, an empirical ratio could exceed the proven
           competitive guarantee (which compares to the true optimum), this
           never occurred; even after normalising by \(L\), all ratios remained
-          below the theoretical limit.
+          below the theoretical limit. Given the looseness of our bound, it is likely that no instance was even close to the worst case scenario.
 \end{enumerate}
 
 Complete numerical results and figures are provided in
 Appendix~\ref{ap.experiments}.
-
-\subsection{Summary of Results}
 
 \begin{table}[htbp]
 \centering
@@ -2141,16 +2149,48 @@ Average & 1.92 & 1.52 & 1.52 & 6.70 & 9.50 \\
 \bottomrule
 \end{tabular}
 \end{table}
+%------------------------------------------------------------
+\subsection{Summary of Results}
+\label{sec.expresults}
+
+Table~\ref{tab:average_values} compares \fair\ with earlier model‑specific heuristics and two simple baselines (minTime and minArea) over all speed‑up models.  
+Across the board, \fair\ matches the best specialised algorithm in each model while vastly outperforming the naive baselines.
+
+\begin{itemize}
+\item \textit{Roofline model}: \fair\ attains an average competitive ratio of 1.28, identical to the best prior heuristic and far below the baselines.  It is as expected, since all heuristics are the same for this specific case since they can minimize both time and area. 
+\item \textit{Communication model}: \fair\ reaches 1.38, essentially tying the specialised algorithm presented published in TOPC24 presented in ICPP22.  
+\item \textit{Amdahl model}: \fair\ yields 2.01, on par with the 1.98 ratio of the tailored TOPC24 algorithm.  
+\item \textit{General model}: \fair\ achieves 1.60, only slightly higher than the best specialised ratio (1.50).  
+\item \textit{Power Communication model}: \fair\ obtains 1.35 and in fact outperforms the prior state of the art (1.46).  
+\end{itemize}
+
+Averaged over all models, \fair\ delivers a competitive ratio of 1.52, tying the best specialised heuristic and standing an order of magnitude ahead of the minTime and minArea baselines.  
+These empirical findings confirm the theoretical guarantees: a single universal scheduler can achieve the same high performance previously attainable only with model‑specific tuning. Note that we only experimented when all tasks belong to the same model, because the competitors may not be extended for mixed workflows.
 
 
-\fair is as good as previous heuristics specific for each model
 \section{Conclusion}
 \label{sec.conclusion}
 
-Great paper !
+This work set out to answer whether a single online scheduler could rival model‑specific algorithms for moldable tasks with arbitrary speedup functions.  
+The answer is affirmative.  
 
+We introduced the \fair\ algorithm, proved a general competitive‑ratio bound for arbitrary monotonic speed‑up profiles, and specialised the analysis to the Roofline, Communication, Amdahl, General and Power Communication models.  
+For the first three models, \fair\ attains the optimal competitive ratio permitted by existing lower bounds; for the remaining models it comes within a few per cent of the best possible heuristic that respect two intuitive conditions. Hence, further improvement in terms of competitive ratio seems unlikely. 
+On the practical side, extensive simulation with tens of thousands of synthetic DAGs showed that \fair\ consistently matches or surpasses the best tailored heuristics in practice, while the naive minTime and minArea policies perform an order of magnitude worse.  
+
+These results demonstrate that universal online scheduling for moldable tasks is both achievable and efficient.  
+Since the theory already seems very optimized, the most promising next step is integrating \fair\ into a production HPC or cloud scheduler, exercising it on real job traces, and measuring its impact on throughput and utilization.  
+Additional directions include extending the universal approach to malleable tasks or to objectives beyond makespan, such as energy efficiency or user fairness.  
+
+In short, \fair\ provides a near‑optimal, model‑agnostic solution to online moldable scheduling, closing a gap between specialized theory and practical applicability.
+
+
+\bibliographystyle{plain}
+\bibliography{moldable}
 
 \appendix
+\FloatBarrier 
+
 \newpage
 
 \section{Appendix : Proof that the models are monotonic}
@@ -2161,7 +2201,7 @@ All tasks belonging to speedup models introduced in this paper are monotonic on 
 \end{lemma}
 
 \begin{proof}
-Since Roofline, Communication and Amdahl model are all special case of the General Model, we only need to show the result for the General Model and the Extended Communication Model.
+Since the Roofline, Communication and Amdahl models are all special cases of the General Model, we only need to show the results for the General Model and the Power Communication Model.
 We must show that the given models satisfy the two conditions of the monotonic property:
 
 
@@ -2169,18 +2209,18 @@ We must show that the given models satisfy the two conditions of the monotonic p
 \paragraph{1. General Model.}
 Recall that for the General Model, the execution time is given by:
 \[
-t_j(p_j) = \frac{w_j}{\min(p_j, \bar{p}_j)} + d_j + c_j(p_j - 1)
+t_j(p_j) = \frac{w_j}{\min(p_j, \bar{p}_j)} + d_j + c_j(p_j - 1) .
 \]
 
 \textbf{Non-increasing execution time:}
 
 For $p_j \leq \bar{p}_j$, we have:
 \[
-t_j(p_j) = \frac{w_j}{p_j} + d_j + c_j(p_j - 1)
+t_j(p_j) = \frac{w_j}{p_j} + d_j + c_j(p_j - 1) .
 \]
 The derivative with respect to $p_j$ is:
 \[
-t_j'(p_j) = -\frac{w_j}{p_j^2} + c_j
+t_j'(p_j) = -\frac{w_j}{p_j^2} + c_j .
 \]
 
 This derivative cancels when:
@@ -2190,17 +2230,16 @@ p_j = \sqrt{\frac{w_j}{c_j}} \ .
 
 Let us define:
 \[
-p_j^{\max} = \arg\min_{p \in \left\{\left\lfloor \sqrt{\frac{w_j}{c_j}} \right\rfloor, \left\lceil \sqrt{\frac{w_j}{c_j}} \right\rceil\right\}} t_j(p)
+p_j^* = \arg\min_{p \in \left\{\left\lfloor \sqrt{\frac{w_j}{c_j}} \right\rfloor, \left\lceil \sqrt{\frac{w_j}{c_j}} \right\rceil\right\}} t_j(p) 
 \]
 as the integer value that minimizes $t_j(p)$ among the two integers closest to the real-valued optimum.
 
 We distinguish two cases:
 
-- If $\min(P, \bar{p}_j) \leq p_j^{\max}$, then the execution time strictly decreases on $[1, \min(P, \bar{p}_j)]$, and the minimum is attained at $p_j^{\max} = \min(P, \bar{p}_j)$.
+- If $\min(P, \bar{p}_j) \leq p_j^*$, then the execution time strictly decreases on $[1, \min(P, \bar{p}_j)]$, and the minimum is attained at $p_j^{\max} = \min(P, \bar{p}_j)$.
 
-- Otherwise, $t_j(p)$ decreases until $p_j^{\max}$ and increases afterward. Thus, the execution time is non-increasing on $[1, p_j^{\max}]$, where $p_j^{\max} = \min\left(p_j^{\max}, \bar{p}_j, P\right)$.
+- Otherwise, $t_j(p)$ decreases until $p_j^*$ and increases afterward. Thus, the execution time is non-increasing on $[1, p_j^{\max}]$, where $p_j^{\max} = \min\left(p_j^*, \bar{p}_j, P\right)$.
 
-Therefore, the execution time is non-increasing on $[1, p_j^{\max}]$.
 
 \textbf{Non-decreasing area:}
 
@@ -2208,24 +2247,24 @@ The area is defined by $a_j(p_j) = p_j \cdot t_j(p_j)$.
 
 For $p_j \leq \bar{p}_j$:
 \[
-a_j(p_j) = p_j \left( \frac{w_j}{p_j} + d_j + c_j(p_j - 1) \right) = w_j + p_j d_j + c_j p_j(p_j - 1)
+a_j(p_j) = p_j \left( \frac{w_j}{p_j} + d_j + c_j(p_j - 1) \right) = w_j + p_j d_j + c_j p_j(p_j - 1).
 \]
 
 The derivative is:
 \[
-a_j'(p_j) = d_j + c_j(2p_j - 1)
+a_j'(p_j) = d_j + c_j(2p_j - 1).
 \]
-With $c_j \geq 0$ and $p_j \geq 1$, this derivative is always non-negative, so $a_j(p_j)$ is non-decreasing on $[1, \bar{p}_j]$.
+With $c_j > 0$ and $p_j \geq 1$, this derivative is always non-negative, so $a_j(p_j)$ is non-decreasing on $[1, \bar{p}_j]$.
 
 For $p_j > \bar{p}_j$, recall that $t_j(p_j)$ increases linearly, so:
 \[
 a_j(p_j) = p_j \cdot \left( \frac{w_j}{\bar{p}_j} + d_j + c_j(p_j - 1) \right)
-\]
+,\]
 which is also strictly increasing as it is a convex quadratic function. Thus, $a_j(p_j)$ is non-decreasing on the whole domain.
 
 Hence, the General Model satisfies both monotonic conditions.
 
-\paragraph{2. Power communication model}
+\paragraph{2. Power Communication model}
 
 Recall the execution-time expression
 \[
@@ -2286,13 +2325,13 @@ a_j'(p_j)
     \;=\;c_j(1+\gamma_j)\,p_j^{\gamma_j}\;\ge\;0,
 \]
 because \(c_j>0\) and \(\gamma_j\ge 0\).
-Hence the area is monotone non-decreasing in the processor allocation, as required.
+Hence the area is non-decreasing in the processor allocation, as required.
 
 \end{proof}
 
 
 
-\section{Appendix : Complete Proof of General ratio}
+\section{Appendix: Complete Proof of General Ratio}
 \label{ap.general}
 
 
@@ -2307,23 +2346,23 @@ t(p)=\frac{w}{\min(p,\bar p)}+d+c(p-1)
      =c\!\left(\frac{w'}{\min(p,\bar p)}+d'+p-1\right),
 \]
 with $w'>0$, $d'>0$, $c>0$, and $\bar p\ge1$.
-Allowing $p$ to take non-integer values and assuming $\bar p$ is unbounded,
-the function $t(p)$ is minimised at
+Allowing $p$ to take non-integer values, and assuming $\bar p$ is unbounded,
+the function $t(p)$ is minimized at
 $p^{\star}=\sqrt{w'}$; hence
 \[
 t^{\min}\;\ge\;c\bigl(2\sqrt{w'}+d'-1\bigr).
 \]
 (The bound also holds when $\bar p<p^{\star}$, since then the minimum occurs
-at $p=\bar p$ and is even larger.)
+at $p=\bar p$ and is therefore larger.)
 The minimum area is obtained with one processor:
 $a^{\min}=a(1)=c(w'+d')$.
 
-Let $p^{\max}$ denote the (integer) processor count that minimises the
+Let $p^{\max}$ denote the (integer) processor count that minimizes the
 execution time, i.e.\ $t(p^{\max})=t^{\min}$.  
 Either $p^{\max}=\bar p$ or
 $\lfloor\sqrt{w'}\rfloor\le p^{\max}\le\lceil\sqrt{w'}\rceil$.
 
-We analyse four cases.
+We analyze four cases.
 
 \textbf{Case 1:} $w'\le4$ or $\bar p=1$.  
 Then $p^{\max}\le2$; setting $p=1$ yields
@@ -2334,8 +2373,8 @@ Then $p^{\max}\le2$; setting $p=1$ yields
 \]
 
 \textbf{Case 2:} $4<w'\le800$ and $d'>800$.  
-Choosing $p=1$ gives $t^{\min}>d'>w'$ and
-$t(1)=w+d<2\,t^{\min}$.
+Choosing $p=1$ gives $a(p)=a^{\min}$. Since $t^{\min}>d'>w'$,
+$t(p)=w+d<2\,t^{\min}$.
 
 
 \begin{figure}[ht]
@@ -2366,7 +2405,7 @@ $t(1)=w+d<2\,t^{\min}$.
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \includegraphics[width=\linewidth]{plotsgen/rectanglesall.png}
-        \caption{all rectangles}
+        \caption{All Rectangles}
     \end{subfigure}
     \caption{Comparative plots for different values of $p$.}
     \label{fig:all_plotsgen}
@@ -2376,7 +2415,7 @@ $t(1)=w+d<2\,t^{\min}$.
 \center
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
-Rectangle & $(w_1,\gamma_1)$ & $(w_2,\gamma_2)$ & $p$ & $p_{min}(w_1,\gamma_1,p) $& $f(w_1,\gamma_1,p)$ & $g(w_2,\gamma_2,p)$ \\
+Rectangle & $(w_1,\gamma_1)$ & $(w_2,\gamma_2)$ & $p$ & $p^{\max}(w_1,\gamma_1,p) $& $f(w_1,\gamma_1,p)$ & $g(w_2,\gamma_2,p)$ \\
 \hline
 1 & $(49,800)$ & $(800,330)$ & 2 &7 & 1.94 & 1.90 \\
 2 & $(185,330)$ & $(485,170)$ & 2 &14 & 1.64 & 1.94 \\
@@ -2393,7 +2432,7 @@ Rectangle & $(w_1,\gamma_1)$ & $(w_2,\gamma_2)$ & $p$ & $p_{min}(w_1,\gamma_1,p)
 13 & $(485,50)$ & $(800,0)$ & 8 &22 & 1.76 & 1.93 \\
 \hline
 \end{tabular}
-\caption{Verification of all extreme values in sub-areas}
+\caption{Verification of extreme values in sub-areas}
 \label{fig.verif2}
 \end{figure}
 \textbf{Case 3}: We first assume that $\bar{p}$ is unbounded.  
@@ -2434,19 +2473,17 @@ Then $\alpha(w',d',p)\le2$ and $\beta(w',d',p)\le2$ for the entire rectangle
 $\bigl[w_{1},w_{2}\bigr]\times\bigl[d_{2},d_{1}\bigr]$.
 
 Figure~\ref{fig:all_plots} illustrates this idea.  
-For each $p\in\{2,3,4,6,8\}$ we colour in red the regions where
+For each $p\in\{2,3,4,6,8\}$ we color in red the regions where
 $\alpha(w',d',p)>2$ (upper-left) and where $\beta(w',d',p)>2$
 (lower-right), using a Python script.  
 We then subdivide the domain $(w'\in[4,800],\,d'\in[0,800])$ into
-13 sub-rectangles, assigning a single value of $p$ to each; for example,
+13 sub-rectangles that don't intersect the red zones, assigning a single value of $p$ to each; for example,
 sub-rectangle~5 uses $p=3$.  
-To confirm that a sub-rectangle avoids the red zones without relying on the
-script, it suffices to check:
+The existence of an allocation of an allocation respecting the conditions can be viewed in the figure, but to confirm that a sub-rectangle avoids the red zones without relying on the Python script, it suffices to check:
 \begin{itemize}
-    \item the upper-left corner for $\alpha$: $\alpha(w_{1},d_{1},p)\le2$,
-    \item the lower-right corner for $\beta$: $\beta(w_{2},d_{2},p)\le2$,
-    \item that $p \le p^{\max}$ at the upper-left corner: $p^{\max}(w_{1},d_{1})\ge p$,
-    \item and that $p^2 \le w_1$.
+    \item the upper-left corner for $\alpha$: $\alpha(w_{1},d_{1},p)\le2$ (in Figure~\ref{fig:all_plots}, this is the closest point to the upper-left redzone corresponding to  which corresponds to excessive area),
+    \item the lower-right corner for $\beta$: $\beta(w_{2},d_{2},p)\le2$ (in Figure~\ref{fig:all_plots}, this is the closest point to the lower-right redzone which corresponds to excessive execution time),
+    \item that $p \le p^{\max}$ at the upper-left corner: $p^{\max}(w_{1},d_{1})\ge p$ (as this inequality will hold true in all the rectangle if it is true for the top-left corner).
 \end{itemize}
 
 
@@ -2456,10 +2493,10 @@ Figure~\ref{fig.verif2}.
 \medskip
 We have thus shown that, when $\bar{p}$ is unbounded, there exists a
 processor count $p'$ such that
-\(\tfrac{t(p')}{t_{min}}\le2.018\) and
+\(\tfrac{t(p')}{t_{\min}}\le2.018\) and
 \(\tfrac{a(p')}{a_{min}}\le2.018\).
 If instead $\bar{p}<p'$, we simply set $p=\bar{p}=p^{\max}$; this choice
-reduces the area and yields $t(p)=t_{min}$.
+reduces the area and yields $t(p)=t_{\min}$.
 
 \textbf{Case 4:} $w'>800$.  
 This case is treated in the main body of the paper.
@@ -2473,10 +2510,10 @@ gives a competitive ratio strictly below $4.6$.
 
 \FloatBarrier 
 \newpage
-\section{Appendix : Complete Proof of Extended Communication ratio}
+\section{Appendix : Complete Proof of Power Communication Ratio}
 \label{ap.powcom}
-\begin{lemma}\label{lem.pcom}
-For any task that follows the Power Communication model, there exists a processor allocation that achieves a ratio of at most $R^{\PCOM}<2.00424$. Therefore, \fair\ is $4.566$-competitive when all tasks follow the Power Communication model.
+\begin{lemma}\label{lem.pcomap}
+For any task that follows the Power Communication model, there exists a processor allocation that achieves Power a ratio no greater $R^{\PCOM}<2.00424$. Therefore, \fair\ is $4.57$-competitive when all tasks follow the Power Communication model.
 \end{lemma}
 
 \begin{proof}
@@ -2484,12 +2521,14 @@ If a task follows the Power Communication model, its execution time can be writt
 $t(p) = \frac{w}{p} + c p^\gamma
        = c \left( \frac{w'}{p} + p^\gamma \right)$,
 with $w'>0$ and $0<\gamma \le 1$.  Allowing $p$ to take non-integer values, a quick analysis shows that
-the function $t(p)$ is minimised at
+the function $t(p)$ is minimized at
 $p^{\star} = \left( \frac{w'}{\gamma} \right)^{\frac{1}{\gamma+1}}$; with
- $t_{min} \geq \left( \gamma+1\right)\left( \frac{w'}{\gamma} \right)^{\frac{\gamma}{\gamma+1}}$.
+ $t_{\min} \geq \left( \gamma+1\right)\left( \frac{w'}{\gamma} \right)^{\frac{\gamma}{\gamma+1}}$.
+In this appendix, we assume $P>p^*$, since the other case is treated in the main part of the paper. We distinguish three cases:
+
 
 \textbf{Case 1}: $w \leq 2$.  
-If $p^{\max}=1$, then we choose $p=1$ and get $\frac{a(p)}{a_{\min}} = \frac{t(p)}{t_{\min}} = 1$. Otherwise, we choose $p=2$. Since $t(2) \leq t(1)$, we have $a(2) \leq 2a_{\min}$. Finally, $t(2) = c\left(\frac{w'}{2} + 2^\gamma \right) \leq c(1 + 2^\gamma) \leq c\left(1 + ({p^{\max}})^\gamma \right) \leq c +t_{\min}$. Since $t_{\min} \geq c$, we have $\frac{t(p)}{t_{\min}} \leq 2$.
+If $p^{\max}=1$, then we choose $p=1$ and get $\frac{a(p)}{a_{\min}} = \frac{t(p)}{t_{\min}} = 1$. Otherwise, we choose $p=2$. Since $t(2) \leq t(1)$, we have $a(2) \leq 2a_{\min}$. Finally, $t(2) = c\left(\frac{w'}{2} + 2^\gamma \right) \leq c(1 + 2^\gamma) \leq c\left(1 + ({p^{\max}})^\gamma \right) \leq c +t_{\min}$. As $t_{\min} \geq c$, it follows that $\frac{t(p)}{t_{\min}} \leq 2$.
 
 \begin{figure}[ht]
     \centering
@@ -2529,7 +2568,7 @@ If $p^{\max}=1$, then we choose $p=1$ and get $\frac{a(p)}{a_{\min}} = \frac{t(p
     \end{subfigure}
     \begin{subfigure}{0.32\textwidth}
         \includegraphics[width=\linewidth]{plotsexcom/rectanglesall.png}
-        \caption{all rectangles}
+        \caption{All Rectangles}
     \end{subfigure}
     \caption{Comparative plots for different values of $p$.}
     \label{fig:all_plots}
@@ -2555,8 +2594,8 @@ Rectangle & $(w_1,\gamma_1)$ & $(w_2,\gamma_2)$ & $p$ & $p_{\max}(w_1,\gamma_1,p
 12 & $(7,0.05)$ & $(8,0)$ & 8 &111 & 1.98 & 2.00 \\
 \hline
 \end{tabular}
-\label{fig.verif}
 \caption{Verification of all extreme values in sub-areas}
+\label{fig.verif}
 \end{figure}\textbf{Case 2}: $2 \leq w' < 8$.  
 Let  $\alpha(w',\gamma,p)= \frac{a(w',\gamma,p)}{a_{\min}(\gamma,p)} = \frac{w' + p^{\gamma+1}}{w' + 1}$ and $\beta(w',\gamma,p) = \frac{t(w',\gamma,p)}{t_{\min}(\gamma,p)} = \frac{\frac{w'}{p} + p^\gamma}{\frac{w'}{p^{\max}} + {p^{\max}}^\gamma}$. The objective is to show that for any pair $(w',\gamma)$, there exists a $p$ such that $\alpha(w',\gamma,p) \leq 2$ and $\beta(w',\gamma,p) \leq 2$.
 
@@ -2564,9 +2603,9 @@ We observe that $\alpha(w',\gamma,p) = 1 + \frac{p^{\gamma+1} - 1}{w' + 1}$ incr
 Similarly, if $p^{\max} \geq p$, with $p$ fixed and $p < p^{\max}$, the ratio $\beta(w',\gamma,p)$ increases with $w'$ (a larger $w'$ implies more parallel work and thus a larger $\frac{t}{t_{\min}}$) and decreases with $\gamma$ (since a higher communication cost implies less efficient parallelism).  
 Additionally, $p^{\max}$ increases with $w'$ (more parallelism) and decreases with $\gamma$ (less parallelism), assuming all other parameters are fixed. This can be verified via a quick analysis, omitted here.
 
-Therefore, if for a pair $(w',\gamma)$ we are given $w_1 \leq w' \leq w_2$, $\gamma_2 \leq \gamma \leq \gamma_1$, and a $p$ such that $p^{\max}(w_1,\gamma_1) \geq p$, $\alpha(w_1,\gamma_1,p) \leq 2$, and $\beta(w_2,\gamma_2,p) \leq 2$, then we are assured that $\alpha(w',\gamma,p) \leq 2$ and $\beta(w',\gamma,p) \leq 2$.
+Therefore, we use the same idea as in the previous appendix. If for a pair $(w',\gamma)$ we are given $w_1 \leq w' \leq w_2$, $\gamma_2 \leq \gamma \leq \gamma_1$, and a $p$ such that $p^{\max}(w_1,\gamma_1) \geq p$, $\alpha(w_1,\gamma_1,p) \leq 2$, and $\beta(w_2,\gamma_2,p) \leq 2$, then we are assured that $\alpha(w',\gamma,p) \leq 2$ and $\beta(w',\gamma,p) \leq 2$.
 
-We further illustrate this with Figure~\ref{fig:all_plots}: for each $p \in [2,8]$, we color in red the areas where $\alpha(w',\gamma,p) > 2$ (top-left area) and where $\beta(w',\gamma,p) > 2$ (bottom-right area). We subdivide the region $(w' \in [2,8],\; \gamma \in [0,1])$ into 13 subrectangles, each assigned a single value of $p$. For instance, rectangle 3 is assigned $p = 3$. To confirm that a sub-rectangle avoids the red zones without relying on the
+We further illustrate this with Figure~\ref{fig:all_plots}: for each $p \in [2,8]$, we color in red the areas where $\alpha(w',\gamma,p) > 2$ (top-left area) and where $\beta(w',\gamma,p) > 2$ (bottom-right area). We subdivide the region $(w' \in [2,8],\; \gamma \in [0,1])$ into 12 sub-rectangles, each assigned a single value of $p$. For instance, rectangle 3 is assigned $p = 3$. We can visually see in the figure the existence of a valid choice of $p$ for any pair $w', \gamma$, but to confirm that a sub-rectangle avoids the red zones without relying on the
 script, it suffices to check:
 \begin{itemize}
     \item the upper-left corner for $\alpha$: $\alpha(w_1, \gamma_1, p) \leq 2$,
@@ -2574,7 +2613,7 @@ script, it suffices to check:
     \item that $p \leq p^{\max}$ at the upper-left corner: $p^{\max}(w_1, \gamma_1) \geq p$,
 \end{itemize}
 
-All these checks are summarized in the table in Figure~\ref{fig.verif2} (note that the values are rounded, but the entries marked $2.00$ are exactly 2).
+All these checks are summarized in the table in Figure~\ref{fig.verif} (note that the values are rounded, but the entries marked $2.00$ are exactly equal to 2).
 
 \textbf{Case 3}: $w' > 8$.  
 This case is treated in the main body of the paper.
@@ -2590,6 +2629,199 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \section{Appendix : Full Experimental Results}
 \label{ap.experiments}
 
+For the reader's convenience, we restate the experimental protocol and describe the meaning of the graphs.
+
+
+
+%------------------------------------------------------------------
+\subsection{Instance Generation}
+\label{sec:instance-gen}
+%------------------------------------------------------------------
+\paragraph{Task generation.}
+Our study evaluates the scheduling heuristics on the five speedup models
+defined in Section~\ref{sec.model}:
+Roofline, Communication, Amdahl, Power Communication, and General.
+For every instance each task is generated independently as follows:
+
+\begin{itemize}
+    \item \textbf{Total work} \(w_j\) — drawn in seconds from the
+          task-generation framework; it equals \(t_j(1)\) for every model.
+    \item \textbf{Parallelism bound} \(p_j^{\max}\) — uniform in $\,[1,512]$.
+    \item \textbf{Sequential fraction ratio} $\rho_d$
+          — log-uniform in $[10^{-3},10^{-0.5}]$
+          (i.e.\ $\rho_d = 10^{\mathrm{Unif}(-3,-0.5)}$);  
+          the absolute sequential part used in Amdahl-type terms is
+          \(d_j = \rho_d \, w_j\).
+    \item \textbf{Communication ratio} $\rho_c$
+          — log-uniform in $[10^{-6},10^{-2}]$
+          (i.e.\ $\rho_c = 10^{\mathrm{Unif}(-6,-2)}$);  
+          the communication coefficient in the time functions is
+          \(c_j = \rho_c \, w_j\).
+    \item \textbf{Power exponent} $\gamma_j$ — uniform in $[0,1]$
+          (only used in the power-communication model).
+\end{itemize}
+
+\noindent
+Sampling $\rho_d$ and $\rho_c$ draws the
+sequential part and the communication cost relative to each task’s
+total work: a large task ($w_j$ high) is therefore more likely to carry a
+proportionally larger sequential or communication component.
+
+
+
+\paragraph{Graph generation.}
+Task-dependency graphs are produced with \texttt{daggen},\footnote{Commit
+\texttt{f3e8b6c} of
+\url{https://github.com/frs69wq/daggen}.}
+which creates synthetic DAGs organised in layers.
+Edges connect a task in one layer to tasks in subsequent layers; if the
+\textit{Jump} parameter exceeds~1, an edge may skip intermediate layers.
+
+The following topology parameters control the structure of each graph:
+\begin{itemize}
+    \item \textbf{Density} $\in[0,1]$ (default $0.5$) — controls how many edges are created between consecutive layers.
+          A value near $0$ yields a very sparse DAG (few dependencies,
+          almost chain-like), whereas a value near $1$ produces a much denser
+          graph with many inter-layer edges.
+    \item \textbf{Fat} $\in[0,1]$ (default $0.5$) — width of the DAG.
+          Low values create thin, chain-like graphs; high values yield
+          wide, fork–join-like structures.
+    \item \textbf{Regular} $\in[0,1]$ (default $0.5$) — uniformity of the task
+          distribution across layers.
+    \item \textbf{Jump} $\in[1,9]$ (default $5$) — maximum number of layers a
+          dependency may skip, controlling the length of execution paths.
+    \item \textbf{Number of tasks} $n\in[500,5000]$ (default $2500$).
+    \item \textbf{Number of processors} $P\in[124,1024]$ (default $512$).
+\end{itemize}
+
+%------------------------------------------------------------------
+\subsection{Heuristics}
+\label{sec:heuristics}
+%------------------------------------------------------------------
+
+For every speedup model we compare five allocation policies:
+\begin{itemize}
+    \item \textbf{ICPP22} — heuristics presented in
+          \cite{ICPP22} (labelled \emph{ICPP22} in all tables). Again, the heuristic is specific to the model tested.
+    \item \textbf{TOPC24} — heuristics presented in
+          \cite{TOPC24} (labelled \emph{TOPC24}), also specific to the model tested.
+          \footnote{For the Power Communication model we extend the
+          allocation rules of both \cite{ICPP22} and \cite{TOPC24} using the
+          analysis of Section~\ref{sec.anamodel}; the resulting variants follow
+          the spirit of the original papers.}
+    \item \textbf{Fair} — our single, model-agnostic heuristic.
+    \item \textbf{minTime} — allocate \(p_j=p_j^{\max}\), minimising each
+          task’s execution time, and schedule tasks ASAP.
+    \item \textbf{minArea} — allocate \(p_j=1\), minimising each
+          task’s processor-time area, and schedule tasks ASAP.
+\end{itemize}
+
+These policies differ only in their processor-allocation rule.
+They are orthogonal to the priority rule used to select which ready
+task is launched next; we therefore evaluate four queue-ordering strategies:
+
+\begin{itemize}
+    \item \textbf{FIFO} (default) — first in, first out.
+    \item \textbf{procs} — task requiring the largest allocation first \footnote{For $\fair$, we very slightly modify the Algorithm~\ref{alg.online} by precomputing the $p'$, line 11, before the loop to ensure the queue is correctly ordered}.
+    \item \textbf{area} — task with the largest area
+          \(a(p)=t(p)\times p\) first.
+    \item \textbf{length} — task with the largest execution time \(t(p)\) first.
+\end{itemize}
+
+%------------------------------------------------------------------
+\subsection{Experimental Protocol}
+\label{sec:exp-protocol}
+%------------------------------------------------------------------
+
+
+
+
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Param} & \textbf{Default} & \textbf{Test Values} & \textbf{Type} & \textbf{Description} \\ \hline
+        $n$            & 2500             & [500,\,\dots,\,5000] & Scale   & Number of tasks \\ \hline
+        $P$            & 512              & [124,\,\dots,\,1024] & System  & Available processors \\ \hline
+        Priority       & FIFO             & [FIFO, procs\,\dots]       & Policy  & Queue-ordering strategy \\ \hline\hline
+        Density        & 0.5              & [0,\,\dots,\,1]      & Graph   & Edge probability \\ \hline
+        Fat            & 0.5              & [0,\,\dots,\,1]      & Graph   & Width/depth ratio \\ \hline
+        Regular        & 0.5              & [0,\,\dots,\,1]      & Graph   & Degree uniformity \\ \hline
+        Jump           & 5                & [1,\,\dots,\,9]      & Graph   & Maximum jump distance between layers \\ \hline
+    \end{tabular}
+    \caption{Experimental parameters and their default values.}
+    \label{tab:exp-params}
+\end{table}
+
+All default settings and test ranges are summarised in
+Table~\ref{tab:exp-params}.
+For every speedup model and every parameter summarized in the table, we perform one experiment that isolates the impact
+of that parameter on heuristic quality. To do so, we normalize the makespan by a simple lower bound on the best makespan achievable.
+
+\paragraph{Practical lower bound.}
+The analysis in Section~\ref{sec.analysis} compares each heuristic against the
+optimal makespan \(T^{\opt}\), whose two classical components are
+\(\tfrac{A^{\opt}}{P}\) (area bound) and \(C^{\opt}\) (critical-path bound).
+Unfortunately, computing either \(A^{\opt}\) or the allocations that realise
+\(C^{\opt}\) is NP-complete.%
+
+For large-scale empirical comparisons we therefore use a
+looser, polynomial Lower Bound:
+\[
+L \;=\;
+\max\!\Bigl(\,
+  \tfrac{A^{\min}}{P},\;
+  C^{\min}
+\Bigr),
+\]
+where
+\[
+A^{\min} \;=\;
+\sum_{j=1}^{n} a_j(1),  \qquad
+C^{\min} \;=\;
+\max_{f}\;
+\sum_{j\in f}\!
+      t_j\!\bigl(p_j^{\max}\bigr).
+\]
+\begin{itemize}
+  \item \(A^{\min}\) is the total area if every task runs on a single
+        processor, which is the minimum possible area for the instance.
+  \item \(C^{\min}\) is the length of the longest path when each task is
+        executed with its allocation \(p_j^{\max}\) that minimizes
+        \(t_j(\,\cdot\,)\).
+\end{itemize}
+Both quantities are readily computable in \(O(|E|+|V|)\) time and clearly
+satisfy \(A^{\min}\!\le A^{\opt}\) and \(C^{\min}\!\le C^{\opt}\), hence
+\(L\le T^{\opt}\).  While \(L\) is less tight than the theoretical bound \footnote{%
+  Lower bounds tighter than the one we adopt and computable in polynomial time also exist
+  \cite{Lepere01_DAG}, but evaluating them would largely dominate the runtime of the experiment.}, it
+is sufficient for comparing heuristics.
+
+The experimental protocol is as follows:
+
+\begin{enumerate}
+    \item Set every parameter to its default value except the one under study,
+          which is swept over all of its \textbf{Test Values}.
+    \item For each setting, generate 50 random instances and simulate them with
+          all heuristics.  
+          The performance metric is the ratio \(\tfrac{T}{L}\), where \(L\) is the lower bound on the optimal makespan previously defined.
+    \item Convert the 50 ratio values per heuristic into a box-plot.
+          The box spans the 25th–75th percentiles; the horizontal black line
+          marks the median; a star denotes the average.
+          Whiskers extend to the 10th and 90th percentiles, and outliers
+          beyond that range are shown as small circles. However, all the detailed results of the experiments for each pair, using these box-plots, is not reported in the main part of the paper.
+    \item Produce two summary tables:  
+          (i) the average ratio for each (heuristic, speedup model)
+          pair plus the overall mean;  
+          (ii) the worst ratio observed for each pair.
+          Although, in principle, an empirical ratio could exceed the proven
+          competitive guarantee (which compares to the true optimum), this
+          never occurred; even after normalising by \(L\), all ratios remained
+          below the theoretical limit. Given the looseness of our bound, it is likely that no instance was even close to the worst case scenario.
+\end{enumerate}
+
+\subsection{Detailed Results}
 
 \begin{figure}[htbp]
 \centering
@@ -2603,9 +2835,12 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Regular/Regular_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Regular_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for Regular}
+\caption{Impact of task distribution regularity (Regular) on scheduling performance.}
 \label{fig:boxplot_figures_Regular}
 \end{figure}
+
+
+
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Density_Roofline}\end{subfigure}
@@ -2618,9 +2853,10 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Density/Density_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Density_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for Density}
+\caption{Impact of inter-layer dependency density (Density) on heuristic performance.}
 \label{fig:boxplot_figures_Density}
 \end{figure}
+
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Fat_Roofline}\end{subfigure}
@@ -2633,9 +2869,10 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Fat/Fat_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Fat_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for Fat}
+\caption{Impact of DAG width-to-depth ratio (Fat) on heuristic efficiency.}
 \label{fig:boxplot_figures_Fat}
 \end{figure}
+
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_n_Roofline}\end{subfigure}
@@ -2648,9 +2885,11 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/n/n_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_n_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for n}
+\caption{Impact of total number of tasks ($n$) on scheduling performance.}
 \label{fig:boxplot_figures_n}
 \end{figure}
+
+
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_P_Roofline}\end{subfigure}
@@ -2663,9 +2902,11 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/P/P_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_P_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for P}
+\caption{Impact of available processors ($P$) on makespan ratio.}
 \label{fig:boxplot_figures_P}
 \end{figure}
+
+
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Priority_Roofline}\end{subfigure}
@@ -2678,9 +2919,12 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Priority/Priority_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Priority_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for Priority}
+\caption{Impact of queue ordering strategy (Priority) on performance.}
 \label{fig:boxplot_figures_Priority}
 \end{figure}
+
+
+
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_Roofline_boxplot}\caption{Roofline}\label{fig:boxplot_figures_Jump_Roofline}\end{subfigure}
@@ -2693,18 +2937,19 @@ In all cases, we conclude that \(R^{\PCOM}<2.00424\), which yields a competitive
 \hfill
 \begin{subfigure}[b]{0.32\textwidth}\includegraphics[width=\textwidth]{Results/Jump/Jump_PowerCom_boxplot}\caption{PowerCom}\label{fig:boxplot_figures_Jump_PowerCom}\end{subfigure}
 \hfill
-\caption{Boxplot Figure for Jump}
+\caption{Impact of maximum dependency skip distance (Jump) on scheduling efficiency.}
 \label{fig:boxplot_figures_Jump}
 \end{figure}
 
 
 \FloatBarrier 
 
+Figures~\ref{fig:boxplot_figures_Regular} to \ref{fig:boxplot_figures_Jump} summarize the detailed experimental results. Each figure corresponds to varying a single parameter listed in Table~\ref{tab:exp-params}, while keeping all other parameters at their default values. The boxplots depict the distribution of makespan ratios relative to the practical lower bound across multiple instances and heuristics.
 \subsection{Average Values}
 \begin{table}[htbp]
 \centering
 \caption{Average Values for Each Model and Heuristic}
-\label{tab:average_values}
+\label{tab:average_valuesap}
 \begin{tabular}{lrrrrr}
 \toprule
 Model & ICPP22 & TOPC24 & Fair & minTime & minArea \\
@@ -2718,6 +2963,9 @@ Average & 1.92 & 1.52 & 1.52 & 6.70 & 9.50 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+
+Table~\ref{tab:average_valuesap} reports the average makespan ratios obtained by each heuristic for each speedup model across all experiments. The last row shows the overall average for each heuristic, facilitating a broad comparison.
 
 \subsection{Maximum Values}
 \begin{table}[htbp]
@@ -2738,10 +2986,9 @@ Maximum & 5.11 & 3.75 & 3.76 & 33.26 & 117.75 \\
 \end{tabular}
 \end{table}
 
+Table~\ref{tab:maximum_values} presents the maximum observed makespan ratios for each heuristic-model pair throughout all experimental scenarios. The last row highlights the highest ratio encountered for each heuristic, illustrating worst-case performance.
 
 \FloatBarrier 
 
-\bibliographystyle{plain}
-\bibliography{moldable}
 
 \end{document}
