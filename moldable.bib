@@ -8,8 +8,42 @@ journal = {Commun. ACM},
 pages = {65–76}
 }
 
+@article{TOPC24,
+author = {Perotin, Lucas and Sun, Hongyang},
+title = {Improved Online Scheduling of Moldable Task Graphs under Common Speedup Models},
+year = {2024},
+issue_date = {March 2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {11},
+number = {1},
+issn = {2329-4949},
+url = {https://doi.org/10.1145/3630052},
+doi = {10.1145/3630052},
+abstract = {We consider the online scheduling problem of moldable task graphs on multiprocessor systems for minimizing the overall completion time (or makespan). Moldable job scheduling has been widely studied in the literature, in particular when tasks have dependencies (i.e., task graphs) or when tasks are released on-the-fly (i.e., online). However, few studies have focused on both (i.e., online scheduling of moldable task graphs). In this article, we design a new online scheduling algorithm for this problem and derive constant competitive ratios under several common yet realistic speedup models (i.e., roofline, communication, Amdahl, and a general combination). These results improve the ones we have shown in the preliminary version of the article. We also prove, for each speedup model, a lower bound on the competitiveness of any online list scheduling algorithm that allocates processors to a task based only on the task’s parameters and not on its position in the graph. This lower bound matches exactly the competitive ratio of our algorithm for the roofline, communication, and Amdahl’s model, and is close to the ratio for the general model. Finally, we provide a lower bound on the competitive ratio of any deterministic online algorithm for the arbitrary speedup model, which is not constant but depends on the number of tasks in the longest path of the graph.},
+journal = {ACM Trans. Parallel Comput.},
+month = mar,
+articleno = {2},
+numpages = {31},
+keywords = {Task graph, moldable task, online scheduling, competitive ratio}
+}
 
-
+@inproceedings{ICPP22,
+author = {Benoit, Anne and Perotin, Lucas and Robert, Yves and Sun, Hongyang},
+title = {Online Scheduling of Moldable Task Graphs under Common Speedup Models},
+year = {2023},
+isbn = {9781450397339},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3545008.3545049},
+doi = {10.1145/3545008.3545049},
+booktitle = {Proceedings of the 51st International Conference on Parallel Processing},
+articleno = {51},
+numpages = {11},
+keywords = {online scheduling, moldable task, competitive ratio., Task graph},
+location = {Bordeaux, France},
+series = {ICPP '22}
+}
 
 
 @article{Sleator1985,
