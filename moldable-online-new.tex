@@ -104,7 +104,7 @@
 \newenvironment{proofsketch}{%
   \renewcommand{\proofname}{Proof sketch}\proof}{\endproof}
   
-\title{Near-Optimal Universal Scheduling for Moldable Tasks: The \fair Algorithm}
+\title{Near-Optimal Universal Heuristic for Online Scheduling of Moldable Task Graphs: The \fair Algorithm}
 
 \author{
   Lucas Perotin\thanks{Vanderbilt University, \texttt{lucas.perotin@vanderbilt.edu}} \\
@@ -367,7 +367,7 @@ In this section, we introduce \fair, an online scheduling algorithm for which we
 \end{algorithm}
 }
 
-We begin by describing the subroutine \texttt{Compute\_Ratio}($j$), which assigns an initial processor allocation to each task $j$ and is detailed in Algorithm~\ref{alg.allocate1}. For each possible allocation $p \in [1, p_j^{\max}]$, \texttt{Compute\_Ratio}($j$) computes  $\ratio_j(p)$ and finds the processor allocation minimizing it, noted $p_j$, with a resulting ratio $\ratio_j$. Because this allocation minimizes the maximum of the two normalized metrics, it ensures that both the execution time and the area of task $j$ are as close as possible of their respective optima. Since $g_j(p)$ is non-decreasing and $f_j(p)$ is non-increasing over $p$, this minimization can be efficiently solved using binary search in $O(\log P)$ time. The subroutine returns $p_j$ and $\ratio_j$.
+We begin by describing the subroutine \texttt{Compute\_Ratio}($j$), which assigns an initial processor allocation to each task $j$ and is detailed in Algorithm~\ref{alg.allocate1}. For each possible allocation $p \in [1, p_j^{\max}]$, \texttt{Compute\_Ratio}($j$) computes  $\ratio_j(p)$ and finds the processor allocation minimizing it, noted $p_j$, with a resulting ratio $\ratio_j$. Because this allocation minimizes the maximum of the two normalized metrics, it ensures that both the execution time and the area of task $j$ are as close as possible of their respective optima. Since $a_j(p)$ is non-decreasing and $t_j(p)$ is non-increasing over $p$, this minimization can be efficiently solved using binary search in $O(\log P)$ time. The subroutine returns $p_j$ and $\ratio_j$.
 
 
 {%\LinesNumberedHidden
@@ -407,7 +407,7 @@ To improve processor utilization and avoid excessive idle time, the algorithm in
 In the analysis, we will show that the best choice for this fraction is denoted by:
 \begin{align}
 \label{eq.muR}
-\mu(\rratio)=\frac{2\rratio+1-\sqrt{4\rratio^2+1}}{2\rratio}
+\mu(\rratio)=\frac{2\rratio+1-\sqrt{4\rratio^2+1}}{2\rratio}\ .
 \end{align}
 More precisely, let $p_j$ denote the initial allocation for task~$j$, and $p'_j$ the final allocation after adjustment. Then
 \begin{align}
@@ -781,11 +781,11 @@ This refined classification will allow the derivation of bounds involving $\frac
 
 For each interval $I$, let $|I|$ denote its duration. We define the total durations of each category within period $k$:
 \[
-T_1^k = \sum_{I \in \mathcal{I}_1^k} |I|, \quad T_2^k = \sum_{I \in \mathcal{I}_2^k} |I|, \quad T_{2'}^k = \sum_{I \in \mathcal{I}_{2'}^k} |I|, \quad T_{2''}^k = \sum_{I \in \mathcal{I}_{2''}^k} |I|, \quad T_3^k = \sum_{I \in \mathcal{I}_3^k} |I|.
+T_1^k = \sum_{I \in \mathcal{I}_1^k} |I|, \quad T_2^k = \sum_{I \in \mathcal{I}_2^k} |I|, \quad T_{2'}^k = \sum_{I \in \mathcal{I}_{2'}^k} |I|, \quad T_{2''}^k = \sum_{I \in \mathcal{I}_{2''}^k} |I|, \quad T_3^k = \sum_{I \in \mathcal{I}_3^k} |I|\ .
 \]
 Given the partitioning properties—$\mathcal{I}_0$ and $\mathcal{I}_3$ partition $\mathcal{I}$, $(\mathcal{I}_0^k)_{k=1}^m$ partition $\mathcal{I}_0$, $(\mathcal{I}_3^k)_{k=1}^m$ partition $\mathcal{I}_3$, $\mathcal{I}_1^k$ and $\mathcal{I}_2^k$ partition $\mathcal{I}_0^k$, and $\mathcal{I}_{2'}^k$ and $\mathcal{I}_{2''}^k$ partition $\mathcal{I}_2^k$—the makespan is:
 \[
-T = \sum_{k=1}^m (T_1^k + T_2^k + T_3^k).
+T = \sum_{k=1}^m (T_1^k + T_2^k + T_3^k)\ .
 \]
 
 This structured decomposition enables a detailed worst-case performance analysis of \textsc{Fair} by examining the contributions of each interval category to the makespan $T$.
@@ -795,11 +795,11 @@ In the rest of the analysis, we will build upper bounds that will be used to rep
 Additionally, for each $k$, since $T_2^k = T_{2'}^k + T_{2''}^k$, we introduce $z_k \in [0,1]$ such that:
 \begin{equation}
 \label{eq.zk}
-T_{2'}^k = z_k T_2^k, \quad T_{2''}^k = (1 - z_k) T_2^k
+T_{2'}^k = z_k T_2^k, \quad T_{2''}^k = (1 - z_k) T_2^k\ .
 \end{equation}
-quantifying the proportion of $\mathcal{I}_2^k$ where the algorithm under-allocates processors for tasks in the path $f$ compared to the optimal and vice versa.
+$z_k$ quantifies the proportion of $\mathcal{I}_2^k$ where the algorithm under-allocates processors for tasks in the path $f$ compared to the optimal and vice versa.
 
-Finally, for each period \( k \), we define the total time task \( j \) runs within \( \mathcal{I}^{k} \) in the \textsc{Fair} schedule: \[ T_{j}^{k} = \sum_{I \in \mathcal{I}^{k}} |I \cap [s_j, e_j]| \]. Similarly, we can subdivide this length based on the partition of $\mathcal{I}^{k}$:
+Finally, for each period \( k \), we define the total time task \( j \) runs within \( \mathcal{I}^{k} \) in the \textsc{Fair} schedule: \[ T_{j}^{k} = \sum_{I \in \mathcal{I}^{k}} |I \cap [s_j, e_j]|\ . \] Similarly, we can subdivide this length based on the partition of $\mathcal{I}^{k}$:
 \[
 T_{j,1}^{k} = \sum_{I \in \mathcal{I}_{1}^{k}} |I \cap [s_j, e_j]|
 \quad T_{j,2'}^{k} = \sum_{I \in \mathcal{I}_{2'}^{k}} |I \cap [s_j, e_j]|,\quad
@@ -850,7 +850,7 @@ To facilitate comparison, we define corresponding areas in the optimal schedule 
 A^{k,\opt}_{2'|f} = \sum_{j \in f} \frac{T_{j,2'}^{k}}{t_j(p'_j)} a_j^{\opt},\quad
 A^{k,\opt}_{2''|f} = \sum_{j \in f} \frac{T_{j,2''}^{k}}{t_j(p'_j)} a_j^{\opt},\quad
 A^{k,\opt}_{3} = \sum_{j=1}^{n} \frac{T_{j,3}^{k}}{t_j(p'_j)} a_j^{\opt},\quad 
-A^{k,\opt} = \sum_{j=1}^{n} \frac{T_{j}^{k}}{t_j(p'_j)} a_j^{\opt}
+A^{k,\opt} = \sum_{j=1}^{n} \frac{T_{j}^{k}}{t_j(p'_j)} a_j^{\opt},
 \]
 where \(a_j^{\opt} = p_j^{\opt} t_j(p_j^{\opt})\) is the area of task \(j\) in the optimal schedule, \(p_j^{\opt}\) denotes the optimal processor allocation, and \(t_j(p'_j)\) is the execution time of task \(j\) with \(p'_j\) processors in the \textsc{Fair} schedule. These definitions capture the proportional areas in the optimal schedule corresponding to the time spent in the intervals \(\mathcal{I}_{2'}^{k}\), \(\mathcal{I}_{2''}^{k}\), \(\mathcal{I}_{3}^{k}\), and \(\mathcal{I}^{k}\) respectively, in the \fair schedule.
 
@@ -893,7 +893,7 @@ In the example of Figure~\ref{fig:merged_schedule}, (c) and (d), we highlight in
 
 To compute the corresponding optimal length, we use this fraction scaled by the optimal execution time of \( A \), yielding:
 \[
-L_{1|f}^{1,\opt} = \frac{16}{36} \cdot t_A^{\opt}.
+L_{1|f}^{1,\opt} = \frac{16}{36} t_A^{\opt}.
 \]
 From the task table (b), we know that \( t_A^{\opt} = 24 \), so this gives \( L_{1|f}^{1,\opt} = \frac{16}{36} \cdot 24 \). In this example, \( A \) is the only task in \( f \) that overlaps \(\mathcal{I}_1^1\), but in general, several tasks along the path may contribute to the sum.\\
 
@@ -1262,7 +1262,7 @@ The bound is tight for an instance consisting of a single fully parallelisable t
 We can now apply the previous result to get a general bound for arbitrary speedup profiles, by showing that we always have $\ratio \leq \sqrt{P}+1$
 
 \begin{theorem}
-\fair is $(2\sqrt{P}+3)$-competitive
+\fair is $(2\sqrt{P}+3)$-competitive for arbitrary monotonic speedup models
 \end{theorem}
 
 \begin{proof}
@@ -1287,12 +1287,12 @@ Hence:
 
 We now choose \( p = \lceil \sqrt{P} \rceil \), which satisfies \( p \le p_j^{\max} \). Since the task satisfies the monotonic property (Definition~\ref{def.mono}), $t_j(p) \leq t_j(1)$, and it cannot exhibit superlinear speedup. In particular, we have the bound:
 \[
-\frac{t_j(p)}{t_j(p_j^{\max})} \le \frac{p_j^{\max}}{p}
+\frac{t_j(p)}{t_j(p_j^{\max})} \le \frac{p_j^{\max}}{p}\ .
 \]
 Applying this with \( p = \lceil \sqrt{P} \rceil \), we obtain:
 \[
-\frac{t_j(p)}{t_j^{\min}} = \frac{t_j(p)}{t_j(p_j^{\max})} \le \frac{p_j^{\max}}{\lceil \sqrt{P} \rceil} \le \frac{P}{\lceil \sqrt{P} \rceil} \le \sqrt{P}
-\].
+\frac{t_j(p)}{t_j^{\min}} = \frac{t_j(p)}{t_j(p_j^{\max})} \le \frac{p_j^{\max}}{\lceil \sqrt{P} \rceil} \le \frac{P}{\lceil \sqrt{P} \rceil} \le \sqrt{P}\ .
+\]
 
 For the area term:
 \[
@@ -1425,7 +1425,7 @@ A = \sqrt{P}, \quad B = \frac{\sqrt{P} - 1}{P - 1}.
 
 \begin{theorem}
 \label{thm.lowerbound}
-For this instance, any online algorithm has a competitive ratio of at least \( \frac{\sqrt{P}-1}{2} \).
+Any online algorithm has a competitive ratio of at least \( \frac{\sqrt{P}-1}{2} \) for arbitrary monotonic speedup models.
 \end{theorem}
 
 \begin{proof}
@@ -1503,9 +1503,6 @@ Plugging this into Equation~\eqref{eq.makespan}, $T \leq \frac{2\ratio+1+
 \sqrt{4\ratio^2+1}}{2} T^{\opt}$. yields the claimed competitive ratio.
 \end{proof}
 
-\begin{remark}
-The derived competitive ratio is tight in this setting; the proof is omitted for brevity.
-\end{remark}
 
 \begin{lemma}\label{lem.comm}
 For any task that follows the communication model, there exists a processor allocation that achieves a ratio no greater than  $\ratio_{\COM} = \sqrt{2}$.  
@@ -1598,7 +1595,7 @@ p = \left\lfloor \sqrt{\frac{w'}{3}} + \frac{1}{2} \right\rfloor.
 \)
 This yields:
 \begin{align*}
-\frac{a(p)}{a^{\min}}&=\frac{c(w'+p(p-1))}{cw'}\leq 1+\frac{1}{w'}\left( \sqrt{\frac{w'}{3}}+\frac{1}{2}\right)\left(\sqrt{\frac{w'}{3}}-\frac{1}{2}\right)\leq 1+\frac{1}{w'}\frac{w'}{3} = \frac{4}{3}, \\[6pt]
+\frac{a(p)}{a^{\min}}&=\frac{c(w'+p(p-1))}{cw'}\leq 1+\frac{1}{w'}\left( \sqrt{\frac{w'}{3}}+\frac{1}{2}\right)\left(\sqrt{\frac{w'}{3}}-\frac{1}{2}\right)\leq 1+\frac{1}{w'}\frac{w'}{3} = \frac{4}{3}<\sqrt{2}, \\[6pt]
 \frac{t(p)}{t^{\min}} &\leq \frac{c\left(\frac{w'}{\sqrt{\frac{w'}{3}}-\frac{1}{2}} +\sqrt{\frac{w'}{3}}\right)}{c(2\sqrt{w'}-1)}= \frac{\left(\frac{\sqrt{w'}}{\frac{1}{\sqrt{3}}-\frac{1}{2\sqrt{w'}}} +\sqrt{\frac{w'}{3}}\right)}{(2\sqrt{w'}-1)}=\frac{1}{2-\frac{1}{\sqrt{w'}}}\left(\frac{1}{\frac{1}{\sqrt{3}}-\frac{1}{2\sqrt{w'}}} +\frac{1}{\sqrt{3}}\right).
 \end{align*}
 
@@ -1620,12 +1617,9 @@ In all cases, we conclude that $\ratio_{\COM} = \sqrt{2}$, and substituting this
 
 \end{proof}
 
-\begin{remark}
-The derived competitive ratio is tight in this setting; the proof is omitted for brevity.
-\end{remark}
 
 \begin{lemma}\label{lem.amdahl}
-For any task that follows the Amdahl speedup model, there exists a processor allocation that achieves Power a ratio no greater $\ratio_{\AMD}=2$. Therefore, \fair\ is $\frac{5+\sqrt{17}}{2} < 4.562$-competitive when all tasks follow the Amdahl model.
+For any task that follows the Amdahl speedup model, there exists a processor allocation that achieves a ratio no greater $\ratio_{\AMD}=2$. Therefore, \fair\ is $\frac{5+\sqrt{17}}{2} < 4.562$-competitive when all tasks follow the Amdahl model.
 \end{lemma}
 
 \begin{proof}
@@ -1649,12 +1643,9 @@ Otherwise $p=P$, so $t(p)=t^{\min}$ and consequently $\tfrac{t(p)}{t^{\min}}=1<2
 Hence, this gives $\ratio_{\AMD}=2$, and substituting this value into Equation~\ref{eq.makespan} yields the desired competitive ratio.
 \end{proof}
 
-\begin{remark}
-The derived competitive ratio is tight in this setting; the proof is omitted for brevity.
-\end{remark}
 
 \begin{lemma}\label{lem.general}
-For any task that follows the General speedup model, there exists a processor allocation that achieves Power a ratio no greater $R^{\GEN}<2.018$. Therefore, \fair\ is $4.6$-competitive when all tasks follow the General model.
+For any task that follows the General speedup model, there exists a processor allocation that achieves a ratio no greater $R^{\GEN}<2.018$. Therefore, \fair\ is $4.6$-competitive when all tasks follow the General model.
 \end{lemma}
 
 \begin{proof}
@@ -1685,14 +1676,9 @@ Plugging this into Equation~\ref{eq.makespan} shows that the competitive
 ratio is below $4.6$.
 \end{proof}
 
-\begin{remark}
-As with Amdahl, we believe that a sharper analysis would give
-$R_{\GEN}=2$, in which case the derived competitive ratio would be identical
-to that of Amdahl and thus tight in this setting.
-\end{remark}
 
 \begin{lemma}\label{lem.pcom}
-For any task that follows the Power Communication model, there exists a processor allocation that achieves Power a ratio no greater $R^{\PCOM}<2.00424$. Therefore, \fair\ is $4.57$-competitive when all tasks follow the Power Communication model.
+For any task that follows the Power Communication model, there exists a processor allocation that achieves a ratio no greater $R^{\PCOM}<2.00424$. Therefore, \fair\ is $4.57$-competitive when all tasks follow the Power Communication model.
 \end{lemma}
 \begin{proof}
 If a task follows the Power Communication model, its execution time can be written
@@ -1734,14 +1720,14 @@ and, because \(f(\gamma)=2^\gamma+1\) is convex while
 \(\frac{t(p)}{t^{\min}}\le 2.\)
 
 \begin{align*}
-\frac{a(p)}{a_{\min}} &= \frac{w'+p^{\gamma+1}}{w'+1}\le \frac{w'+\bigl(w'^{\frac{1}{\gamma+1}}+1\bigr)^{\gamma+1}}{w'+1}=   \frac{w'+w'\!\bigl(1+w'^{-\,\frac{1}{\gamma+1}}\bigr)^{\gamma+1}}{w'+1} \le \frac{w'+w'\!\bigl(1+w'^{-\,\frac{1}{1.1}}\bigr)^{1.1}}{w'+1}.
+\frac{a(p)}{a_{\min}} &= \frac{w'+p^{\gamma+1}}{w'+1}\le \frac{w'+\bigl(w'^{\frac{1}{\gamma+1}}+1\bigr)^{\gamma+1}}{w'+1}=   \frac{w'+w'\!\bigl(1+w'^{-\,\frac{1}{\gamma+1}}\bigr)^{\gamma+1}}{w'+1} \le \frac{w'+w'\!\bigl(1+w'^{-\,\frac{1}{1.1}}\bigr)^{1.1}}{w'+1}\ .
 \end{align*}
 Recall that for any real exponent $a$ and $|x|<1$ we have the generalized
 binomial expansion
 \[
 (1+x)^a \;=\; \sum_{k=0}^{\infty} \binom{a}{k} x^{k},
 \qquad
-\binom{a}{k} = \frac{a(a-1)\cdots(a-k+1)}{k!}.
+\binom{a}{k} = \frac{a(a-1)\cdots(a-k+1)}{k!}\ .
 \]
 When $1 < a < 2$ the first three coefficients are positive
 ($\binom{a}{0},\binom{a}{1},\binom{a}{2} > 0$),
@@ -1761,13 +1747,13 @@ Therefore truncating after the quadratic term provides an upper bound:
    \;+\; 0.055\,w'^{-\,\tfrac{2}{1.1}}
    \;\le\;
    1 \;+\; 1.1\,w'^{-\,\tfrac{1}{1.1}}
-   \;+\; 0.1\,w'^{-1}.
+   \;+\; 0.1\,w'^{-1}\ .
 \]
 
 
 Hence
 \begin{align*}
-\frac{a(p)}{a_{\min}} \le \frac{w'+w'\bigl(1+1.1\,w'^{-\,\frac{1}{1.1}}+0.1\,w'^{-1}\bigr)}{w'+1} \le \frac{2w'+1.1\,w'^{\frac{1}{11}}+0.1}{w'+1} =   2+\frac{\,1.1\,w'^{\frac{1}{11}}-1.9}{w'+1}.
+\frac{a(p)}{a_{\min}} \le \frac{w'+w'\bigl(1+1.1\,w'^{-\,\frac{1}{1.1}}+0.1\,w'^{-1}\bigr)}{w'+1} \le \frac{2w'+1.1\,w'^{\frac{1}{11}}+0.1}{w'+1} =   2+\frac{\,1.1\,w'^{\frac{1}{11}}-1.9}{w'+1}\ .
 \end{align*}
 
 If \(w'\le \bigl(\tfrac{1.9}{1.1}\bigr)^{11}\) the fraction is non-positive,
@@ -1777,14 +1763,14 @@ Otherwise,
 \frac{a(p)}{a_{\min}}
     \le 2+1.1\,w'^{-\,\frac{10}{11}}
     \le 2+\bigl(\tfrac{1.9}{1.1}\bigr)^{-10}
-    < 2.00424.
+    < 2.00424\ .
 \]
 
 Thus, for all \(w'\ge 8\) and \(0\le\gamma\le0.1\),
 \[
 \frac{t(p)}{t^{\min}}\le 2
 \quad\text{and}\quad
-\frac{a(p)}{a_{\min}}<2.00424,
+\frac{a(p)}{a_{\min}}<2.00424\ .
 \]
 
 \textbf{Case 3:}  $w' \ge 8$ and $\gamma > 0.1$.  
@@ -1800,7 +1786,7 @@ We set \(p=\bigl\lfloor w'^{\frac{1}{\gamma+1}}\bigr\rfloor \leq p^* <P \).
             \tfrac{w'^{\frac{\gamma}{\gamma+1}}}{1-w'^{-\frac{1}{\gamma+1}}}
             +w'^{\frac{\gamma}{\gamma+1}}}
            {w'^{\frac{\gamma}{\gamma+1}}} \le \frac{1}{\gamma+1}\!
-      \left(\frac{1}{1-w'^{-\frac{1}{\gamma+1}}}+1\right).
+      \left(\frac{1}{1-w'^{-\frac{1}{\gamma+1}}}+1\right)\ .
 \end{align*}
 
 The right-hand side decreases with \(w'\), so we may replace \(w'\) with \(8\).  
@@ -1810,7 +1796,7 @@ Define
 f(a,b)=\frac{1}{a+1}
         \left(
           \frac{1}{1-8^{-\frac{1}{b+1}}}+1
-        \right).
+        \right)\ .
 \]
 If \(a \le \gamma \le b\), then \(\tfrac{t(p)}{t^{\min}} \le f(a,b)\), because we upper-bound the decreasing factor by \(a\) and the increasing one by \(b\).  
 A numerical evaluation gives
@@ -1827,7 +1813,7 @@ Finally,
 \begin{align*}
 \frac{a(p)}{a_{\min}}
    &= \frac{w'+p^{\gamma+1}}{w'+1} \le \frac{w'+\bigl(w'^{\frac{1}{\gamma+1}}\bigr)^{\gamma+1}}{w'+1}
-   \le \frac{2w'}{w'+1} < 2 .
+   \le \frac{2w'}{w'+1} < 2 \ .
 \end{align*}
 
 \paragraph{If \( P \leq p^* \).}
@@ -1838,13 +1824,12 @@ In this case, either the previously chosen value of \( p \) exceeds \( P \), in 
 \noindent
 In all cases, \(R^{\PCOM}<2.00424\) yields a competitive ratio strictly below \(4.57\) when substituting in Equation~\ref{eq.makespan}.
 
-\end{proof}
 
+\end{proof}
 \begin{remark}
-As with Amdahl, we believe that a sharper analysis would give
-$R_{\PCOM}=2$, in which case the derived competitive ratio would match that
-of Amdahl and be tight in this setting.
+For the Roofline, Communication, and Amdahl models, the derived competitive ratio is tight: in other words, there exists an instance where the resulting $\frac{T}{T^{\opt}}$ matches the bound exactly (or differs by an arbitrarily small $\epsilon$). For the General and Power Communication models, the ratio is very close to being tight, since Amdahl is a special case of both, and the ratios only differ by a factor at most $1\%$ between those three models. We strongly believe that a sharper analysis would yield $R_{\GEN} = R_{\PCOM} = 2$, in which case the derived competitive ratio would also be tight, with tightness witnessed by an Amdahl-type instance.
 \end{remark}
+
 
 We have derived competitive ratios for all considered speedup models, which are very close to those previously obtained by algorithms tailored to each model, even though our algorithm is general. In the next subsection, we explain why these results are unlikely to be improved upon, unless through fundamentally new techniques.
 
@@ -1923,8 +1908,7 @@ The analysis would then proceed unchanged with $k=1$ since no further updates of
 Thus the deviations of \fair\ from \textsc{LALIST} are not due to online state adaptation, but merely to learning each task’s speedup model on the fly.  
 That \fair\ still achieves a competitive ratio within 1\% of the best \textsc{LALIST} algorithms — including those that know the speedup model perfectly from the start, such as those in~\cite{ICPP22, TOPC24} — shows how little room for improvement remains.
 
-In summary, \fair\ almost matches the best algorithm that follows the \textsc{LALIST} paradigm. Even if a clairvoyant initialization of the ratio were possible, it would not yield a better bound: the non‑clairvoyant version of \fair\ already achieves a ratio very close to the best attainable by any \textsc{LALIST} algorithm, including those that know all task profiles in advance (such as the algorithms in~\cite{ICPP22,TOPC24}). To improve the ratios further, one would need techniques that violate at least one of the defining \textsc{LALIST} conditions. Yet, even with full knowledge of the DAG, no better strategy than the classic two-phase “allocate everything then list-schedule” approach is known. Hence, discovering an online algorithm that outperforms all \textsc{LALIST} strategies still seems far out of reach.\\
-
+In summary, \fair\ almost matches the best algorithm that follows the \textsc{LALIST} paradigm. Even if a clairvoyant initialization of the ratio were possible, it would not yield a better bound: the non‑clairvoyant version of \fair\ already achieves a ratio very close to the best attainable by any \textsc{LALIST} algorithm, including those that know all task profiles in advance (such as the algorithms in~\cite{ICPP22,TOPC24}). To improve the ratios further, one would need techniques that violate at least one of the defining \textsc{LALIST} conditions. Yet, even with full knowledge of the DAG, no better strategy than the classic two-phase “allocate everything then list-schedule” approach is known. Hence, discovering an online algorithm that outperforms all \textsc{LALIST} strategies still seems far out of reach.
 
 After deriving and discussing all these theoretical guarantees, we now turn to an empirical validation. Section~\ref{sec.experiments} explains
 how we generate workloads, which heuristics we test, and how we measure
@@ -2046,6 +2030,7 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
 
 
 \begin{table}[ht]
+    \caption{Experimental parameters and their default values.}
     \centering
     \begin{tabular}{|l|l|l|l|l|}
         \hline
@@ -2058,7 +2043,6 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
         Regular        & 0.5              & [0,\,\dots,\,1]      & Graph   & Degree uniformity \\ \hline
         Jump           & 5                & [1,\,\dots,\,9]      & Graph   & Maximum jump distance between layers \\ \hline
     \end{tabular}
-    \caption{Experimental parameters and their default values.}
     \label{tab:exp-params}
 \end{table}
 
@@ -2118,7 +2102,7 @@ The experimental protocol is as follows:
           The box spans the 25th–75th percentiles; the horizontal black line
           marks the median; a star denotes the average.
           Whiskers extend to the 10th and 90th percentiles, and outliers
-          beyond that range are shown as small circles. However, all the detailed results of the experiments for each pair, using these box-plots, is not reported in the main part of the paper.
+          beyond that range are shown as small circles. However, all the detailed results of the experiments for each pair, using these box-plots, is not reported in the main part of the paper but can instead be viewed in Appendix~\ref{ap.experiments}.
     \item Produce two summary tables:  
           (i) the average ratio for each (heuristic, speedup model)
           pair plus the overall mean;  
@@ -2164,8 +2148,8 @@ Across the board, \fair\ matches the best specialised algorithm in each model wh
 \item \textit{Power Communication model}: \fair\ obtains 1.35 and in fact outperforms the prior state of the art (1.46).  
 \end{itemize}
 
-Averaged over all models, \fair\ delivers a competitive ratio of 1.52, tying the best specialised heuristic and standing an order of magnitude ahead of the minTime and minArea baselines.  
-These empirical findings confirm the theoretical guarantees: a single universal scheduler can achieve the same high performance previously attainable only with model‑specific tuning. Note that we only experimented when all tasks belong to the same model, because the competitors may not be extended for mixed workflows.
+Averaged over all models, \fair\ delivers a ratio of 1.52, tying the best specialised heuristic and standing an order of magnitude ahead of the minTime and minArea baselines.  
+These empirical findings confirm the theoretical guarantees: a single universal scheduler can achieve the same high performance previously attainable only with model‑specific tuning. Note that we only experimented when all tasks belong to the same model, because the competitors may not be extended for mixed workflows. We also report the highest ratio observed among all instances for each model, and again, \fair performs similarly to TOPC24 and better than ICPP22. This can be observed in Appendix~\ref{ap.experiments}.
 
 
 \section{Conclusion}
@@ -2635,7 +2619,7 @@ For the reader's convenience, we restate the experimental protocol and describe 
 
 %------------------------------------------------------------------
 \subsection{Instance Generation}
-\label{sec:instance-gen}
+\label{sec:instance-gen2}
 %------------------------------------------------------------------
 \paragraph{Task generation.}
 Our study evaluates the scheduling heuristics on the five speedup models
@@ -2696,7 +2680,7 @@ The following topology parameters control the structure of each graph:
 
 %------------------------------------------------------------------
 \subsection{Heuristics}
-\label{sec:heuristics}
+\label{sec:heuristics2}
 %------------------------------------------------------------------
 
 For every speedup model we compare five allocation policies:
@@ -2730,7 +2714,7 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
 
 %------------------------------------------------------------------
 \subsection{Experimental Protocol}
-\label{sec:exp-protocol}
+\label{sec:exp-protocol2}
 %------------------------------------------------------------------
 
 
@@ -2738,6 +2722,7 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
 
 
 \begin{table}[ht]
+    \caption{Experimental parameters and their default values.}
     \centering
     \begin{tabular}{|l|l|l|l|l|}
         \hline
@@ -2750,12 +2735,11 @@ task is launched next; we therefore evaluate four queue-ordering strategies:
         Regular        & 0.5              & [0,\,\dots,\,1]      & Graph   & Degree uniformity \\ \hline
         Jump           & 5                & [1,\,\dots,\,9]      & Graph   & Maximum jump distance between layers \\ \hline
     \end{tabular}
-    \caption{Experimental parameters and their default values.}
-    \label{tab:exp-params}
+    \label{tab:exp-params2}
 \end{table}
 
 All default settings and test ranges are summarised in
-Table~\ref{tab:exp-params}.
+Table~\ref{tab:exp-params2}.
 For every speedup model and every parameter summarized in the table, we perform one experiment that isolates the impact
 of that parameter on heuristic quality. To do so, we normalize the makespan by a simple lower bound on the best makespan achievable.
 
@@ -2944,7 +2928,7 @@ The experimental protocol is as follows:
 
 \FloatBarrier 
 
-Figures~\ref{fig:boxplot_figures_Regular} to \ref{fig:boxplot_figures_Jump} summarize the detailed experimental results. Each figure corresponds to varying a single parameter listed in Table~\ref{tab:exp-params}, while keeping all other parameters at their default values. The boxplots depict the distribution of makespan ratios relative to the practical lower bound across multiple instances and heuristics.
+Figures~\ref{fig:boxplot_figures_Regular} to \ref{fig:boxplot_figures_Jump} summarize the detailed experimental results. Each figure corresponds to varying a single parameter listed in Table~\ref{tab:exp-params2}, while keeping all other parameters at their default values. The boxplots depict the distribution of makespan ratios relative to the practical lower bound across multiple instances and heuristics.
 \subsection{Average Values}
 \begin{table}[htbp]
 \centering
